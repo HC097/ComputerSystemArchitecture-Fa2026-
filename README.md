@@ -8,7 +8,7 @@ The notes are organized around the topics covered in the course and are designed
 
 The accompanying lecture videos are available here:
 
-[Lecture Playlist](https://www.youtube.com/playlist?list=PLCDyiPIAw4aU)
+[YouTube Playlist](https://www.youtube.com/playlist?list=PLCDyiPIAw4aU)
 
 ---
 
