@@ -1,0 +1,1789 @@
+\documentclass[11pt]{article}
+
+% ------------------------------------------------------------
+% Packages
+% ------------------------------------------------------------
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% ------------------------------------------------------------
+% General Formatting
+% ------------------------------------------------------------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.75em}
+\setlist[itemize]{leftmargin=1.5em}
+\setlist[enumerate]{leftmargin=1.75em}
+
+% ------------------------------------------------------------
+% Whiteboard Environment
+% Everything placed inside this environment is intended
+% to be physically written on the whiteboard during lecture.
+% ------------------------------------------------------------
+\newenvironment{whiteboard}
+{
+    \par\medskip
+    \begin{center}
+    \begin{minipage}{0.94\textwidth}
+    \hrule
+    \vspace{0.4em}
+    \textbf{\large WHITEBOARD}
+    \vspace{0.3em}
+    \hrule
+    \vspace{0.7em}
+}
+{
+    \vspace{0.5em}
+    \hrule
+    \end{minipage}
+    \end{center}
+    \medskip
+}
+
+% ------------------------------------------------------------
+% Document
+% ------------------------------------------------------------
+\begin{document}
+
+\begin{center}
+    {\LARGE \textbf{Computer System Architecture}}\\[0.5em]
+    {\LARGE \textbf{Lecture 1}}\\[0.5em]
+    {\Large \textbf{Chapter 3: Data Representation}}\\[0.5em]
+    \textit{Based on M. Morris Mano, Computer System Architecture, 3rd ed.}
+\end{center}
+
+\vspace{1em}
+
+% ============================================================
+\section{The Central Problem: What Do Bits Mean?}
+% ============================================================
+
+A digital computer ultimately stores information in registers and memory as
+binary values. A register consists of binary storage elements, so physically it
+contains only patterns of \(0\)'s and \(1\)'s.
+
+Those bit patterns may represent very different kinds of information.
+
+They may represent:
+
+\begin{itemize}
+    \item numbers used in arithmetic,
+    \item letters and other characters,
+    \item discrete symbols,
+    \item or control information used to direct computer operations.
+\end{itemize}
+
+The bits alone therefore do not tell us what the stored information means.
+The meaning depends upon the \emph{representation} being used.
+
+\begin{whiteboard}
+\[
+\boxed{\text{DATA REPRESENTATION}}
+\]
+
+\[
+\text{Registers store bits: }0,1
+\]
+
+\[
+\text{Bits may represent numbers, characters, or other symbols.}
+\]
+
+\[
+\boxed{\text{bit pattern}+\text{interpretation}=\text{meaning}}
+\]
+\end{whiteboard}
+
+This idea will run throughout the chapter. The same physical bit pattern can
+be interpreted differently depending upon what type of data the computer
+expects it to represent.
+
+% ============================================================
+\section{Number Systems and Radix}
+% ============================================================
+
+A positional number system has a \emph{base}, also called a \emph{radix},
+denoted by \(r\).
+
+A number written in radix \(r\) consists of digits whose positions are weighted
+by integer powers of \(r\). In general,
+
+\[
+N=\sum_i d_i r^i,
+\]
+
+where \(d_i\) is the digit occupying position \(i\).
+
+The four number systems of greatest interest here are:
+
+\[
+\begin{array}{c|c}
+\text{Number System} & \text{Radix} \\ \hline
+\text{Binary} & 2\\
+\text{Octal} & 8\\
+\text{Decimal} & 10\\
+\text{Hexadecimal} & 16
+\end{array}
+\]
+
+In hexadecimal, the symbols
+
+\[
+A,B,C,D,E,F
+\]
+
+represent decimal values
+
+\[
+10,11,12,13,14,15.
+\]
+
+\begin{whiteboard}
+\[
+\boxed{\text{Radix }r}
+\]
+
+\[
+N=\sum_i d_i r^i
+\]
+
+\[
+\begin{array}{c|c}
+\text{System} & r \\ \hline
+\text{binary} & 2\\
+\text{octal} & 8\\
+\text{decimal} & 10\\
+\text{hexadecimal} & 16
+\end{array}
+\]
+
+\[
+A=10,\quad B=11,\quad \ldots,\quad F=15
+\]
+\end{whiteboard}
+
+For example,
+
+\[
+(101101)_2
+\]
+
+has the decimal value
+
+\[
+1(2^5)+0(2^4)+1(2^3)+1(2^2)+0(2^1)+1(2^0).
+\]
+
+Therefore,
+
+\[
+(101101)_2=(45)_{10}.
+\]
+
+\begin{whiteboard}
+\[
+(101101)_2
+\]
+
+\[
+=1(2^5)+0(2^4)+1(2^3)+1(2^2)+0(2)+1
+\]
+
+\[
+=32+8+4+1
+\]
+
+\[
+\boxed{(101101)_2=(45)_{10}}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Converting Decimal Integers to Another Radix}
+% ============================================================
+
+To convert a decimal integer into radix \(r\):
+
+\begin{enumerate}
+    \item Divide the number by \(r\).
+    \item Record the remainder.
+    \item Divide the quotient by \(r\) again.
+    \item Continue until the quotient is zero.
+    \item Read the remainders from last to first.
+\end{enumerate}
+
+Consider the conversion of \(13_{10}\) to binary.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Decimal integer}\rightarrow\text{base }r}
+\]
+
+\[
+\text{Repeatedly divide by }r.
+\]
+
+\[
+\text{Read the remainders upward.}
+\]
+
+\[
+\begin{array}{rcl}
+13/2 &=& 6\quad R1\\
+6/2  &=& 3\quad R0\\
+3/2  &=& 1\quad R1\\
+1/2  &=& 0\quad R1
+\end{array}
+\]
+
+Reading upward:
+
+\[
+\boxed{(13)_{10}=(1101)_2}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Converting Decimal Fractions}
+% ============================================================
+
+The fractional part of a decimal number is converted differently.
+
+To convert a decimal fraction into radix \(r\):
+
+\begin{enumerate}
+    \item Multiply the fraction by \(r\).
+    \item Record the integer part of the result.
+    \item Multiply the remaining fractional part by \(r\).
+    \item Continue until the fraction becomes zero or the desired precision
+    has been obtained.
+    \item Read the generated integer digits from first to last.
+\end{enumerate}
+
+For example, convert
+
+\[
+(0.625)_{10}
+\]
+
+to binary.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Decimal fraction}\rightarrow\text{base }r}
+\]
+
+\[
+\text{Repeatedly multiply by }r.
+\]
+
+\[
+\text{Read integer parts downward.}
+\]
+
+\[
+0.625(2)=1.25\Rightarrow1
+\]
+
+\[
+0.25(2)=0.50\Rightarrow0
+\]
+
+\[
+0.50(2)=1.00\Rightarrow1
+\]
+
+\[
+\boxed{(0.625)_{10}=(0.101)_2}
+\]
+\end{whiteboard}
+
+For a mixed number, the integer and fractional portions are converted
+separately and then joined at the radix point.
+
+% ============================================================
+\section{Binary, Octal, and Hexadecimal}
+% ============================================================
+
+Octal and hexadecimal are especially convenient when working with binary
+numbers because their radices are powers of two:
+
+\[
+8=2^3,
+\qquad
+16=2^4.
+\]
+
+Therefore,
+
+\[
+\boxed{1\text{ octal digit}=3\text{ binary bits}}
+\]
+
+and
+
+\[
+\boxed{1\text{ hexadecimal digit}=4\text{ binary bits}}.
+\]
+
+This makes conversion between these systems a matter of grouping bits rather
+than performing arithmetic.
+
+\begin{whiteboard}
+\[
+8=2^3
+\Rightarrow
+1\text{ octal digit}=3\text{ bits}
+\]
+
+\[
+16=2^4
+\Rightarrow
+1\text{ hex digit}=4\text{ bits}
+\]
+
+For hexadecimal:
+
+\[
+1010\quad1111\quad0110\quad0011
+\]
+
+\[
+\phantom{1010}\ A\qquad\ F\qquad\ 6\qquad\ 3
+\]
+
+\[
+\boxed{(1010111101100011)_2=(AF63)_{16}}
+\]
+
+For octal:
+
+\[
+\boxed{\text{Group binary bits in groups of 3.}}
+\]
+\end{whiteboard}
+
+Octal and hexadecimal are convenient ways of displaying the contents of
+binary registers because they greatly shorten long strings of \(0\)'s and
+\(1\)'s.
+
+% ============================================================
+\section{Binary Numbers Versus Binary Codes}
+% ============================================================
+
+A crucial distinction must now be made.
+
+A number can be \emph{converted} into binary, or its decimal digits can be
+\emph{encoded} with binary patterns. These are not the same operation.
+
+For example,
+
+\[
+(99)_{10}=(1100011)_2.
+\]
+
+This is the ordinary binary representation of the numerical quantity ninety-nine.
+
+In binary-coded decimal, or BCD, each decimal digit is instead encoded
+separately using four bits:
+
+\[
+9\rightarrow1001.
+\]
+
+Therefore,
+
+\[
+99_{\text{BCD}}=1001\ 1001.
+\]
+
+\begin{whiteboard}
+\[
+\boxed{\text{Binary number}\neq\text{binary-coded decimal}}
+\]
+
+\[
+99_{10}=1100011_2
+\]
+
+but
+
+\[
+99_{\text{BCD}}=1001\ 1001
+\]
+
+\[
+\boxed{\text{BCD encodes each decimal digit separately.}}
+\]
+\end{whiteboard}
+
+The BCD assignments are
+
+\[
+\begin{array}{c|c}
+\text{Decimal Digit} & \text{BCD} \\ \hline
+0&0000\\
+1&0001\\
+2&0010\\
+3&0011\\
+4&0100\\
+5&0101\\
+6&0110\\
+7&0111\\
+8&1000\\
+9&1001
+\end{array}
+\]
+
+Because four bits permit \(2^4=16\) different patterns but only ten decimal
+digits exist, six BCD patterns are unused.
+
+\begin{whiteboard}
+\[
+0\rightarrow0000,\quad\ldots,\quad9\rightarrow1001
+\]
+
+\[
+\boxed{1010\text{ through }1111\text{ are unused in BCD.}}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Alphanumeric Representation and ASCII}
+% ============================================================
+
+Computers must also represent letters, digits, punctuation marks, and special
+characters.
+
+An \emph{alphanumeric code} assigns a binary pattern to each character in a
+character set.
+
+The standard code discussed by Mano is ASCII, the American Standard Code
+for Information Interchange.
+
+ASCII uses seven bits, permitting
+
+\[
+2^7=128
+\]
+
+different character codes.
+
+Examples include
+
+\[
+A=1000001
+\]
+
+and
+
+\[
+0=0110000.
+\]
+
+\begin{whiteboard}
+\[
+\boxed{\text{ASCII}}
+\]
+
+\[
+7\text{ bits}\Rightarrow2^7=128\text{ possible codes}
+\]
+
+\[
+A=1000001
+\]
+
+\[
+0=0110000,\qquad9=0111001
+\]
+\end{whiteboard}
+
+An interesting relationship exists between the ASCII codes for decimal digits
+and BCD. The ASCII digits begin with the three high-order bits \(011\).
+
+Thus,
+
+\[
+011\,0000
+\]
+
+is ASCII \(0\), while
+
+\[
+011\,1001
+\]
+
+is ASCII \(9\).
+
+Removing the high-order \(011\) leaves the corresponding four-bit BCD digit.
+
+\begin{whiteboard}
+\[
+\text{ASCII decimal digit: }011\,xxxx
+\]
+
+\[
+\text{Remove }011
+\]
+
+\[
+\Downarrow
+\]
+
+\[
+\boxed{\text{BCD digit }xxxx}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Complements}
+% ============================================================
+
+Complements are useful because they allow subtraction to be performed through
+addition.
+
+For a base-\(r\), \(n\)-digit number \(N\), Mano defines two complements.
+
+The \((r-1)\)'s complement is
+
+\[
+(r^n-1)-N.
+\]
+
+The \(r\)'s complement is
+
+\[
+r^n-N
+\]
+
+for nonzero \(N\).
+
+\begin{whiteboard}
+\[
+\boxed{(r-1)\text{'s complement}=(r^n-1)-N}
+\]
+
+\[
+\boxed{r\text{'s complement}=r^n-N}
+\]
+
+\[
+\begin{array}{c|c|c}
+ & r-1 & r \\ \hline
+\text{decimal} & 9\text{'s} & 10\text{'s}\\
+\text{binary} & 1\text{'s} & 2\text{'s}
+\end{array}
+\]
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{1's Complement}
+% ------------------------------------------------------------
+
+The 1's complement of a binary number is obtained by changing every
+
+\[
+0\rightarrow1
+\]
+
+and every
+
+\[
+1\rightarrow0.
+\]
+
+For example,
+
+\[
+1011001
+\]
+
+becomes
+
+\[
+0100110.
+\]
+
+\begin{whiteboard}
+\[
+\boxed{\text{1's complement: flip every bit}}
+\]
+
+\[
+1011001
+\]
+
+\[
+\Downarrow
+\]
+
+\[
+0100110
+\]
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{2's Complement}
+% ------------------------------------------------------------
+
+The 2's complement is obtained by first taking the 1's complement and then
+adding one.
+
+For example,
+
+\[
+101100
+\]
+
+has 1's complement
+
+\[
+010011.
+\]
+
+Adding one gives
+
+\[
+010011+1=010100.
+\]
+
+\begin{whiteboard}
+\[
+\boxed{\text{2's complement: flip every bit, then add 1}}
+\]
+
+\[
+101100
+\]
+
+\[
+\Downarrow
+\]
+
+\[
+010011
+\]
+
+\[
++1
+\]
+
+\[
+\boxed{010100}
+\]
+\end{whiteboard}
+
+A useful shortcut is to begin at the right side of the number.
+
+Leave all trailing \(0\)'s and the first \(1\) unchanged. Complement every
+remaining bit to the left.
+
+\begin{whiteboard}
+\[
+\boxed{
+\begin{array}{c}
+\text{2's-complement shortcut:}\\
+\text{from the right, keep trailing zeros and the first 1;}\\
+\text{flip everything to the left.}
+\end{array}}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Subtraction Using Complements}
+% ============================================================
+
+Suppose two \(n\)-bit unsigned numbers \(M\) and \(N\) are to be subtracted.
+
+Instead of directly computing
+
+\[
+M-N,
+\]
+
+we may add the 2's complement of \(N\):
+
+\[
+M+(2^n-N).
+\]
+
+Algebraically,
+
+\[
+M+(2^n-N)=M-N+2^n.
+\]
+
+If an end carry occurs, the \(2^n\) term appears as that carry and is discarded.
+
+\begin{whiteboard}
+\[
+\boxed{M-N=M+(2^n-N)}
+\]
+
+\[
+M+(2^n-N)=M-N+2^n
+\]
+
+\[
+\boxed{\text{Subtraction can be implemented with addition hardware.}}
+\]
+\end{whiteboard}
+
+Consider \(7-5\) using four bits.
+
+\[
+7=0111,
+\qquad
+5=0101.
+\]
+
+The 2's complement of \(0101\) is
+
+\[
+1011.
+\]
+
+Therefore,
+
+\[
+0111+1011=1\,0010.
+\]
+
+The end carry is discarded, leaving
+
+\[
+0010=2.
+\]
+
+\begin{whiteboard}
+\[
+7-5
+\]
+
+\[
+7=0111,\qquad5=0101
+\]
+
+\[
+\text{2's comp. of }0101=1011
+\]
+
+\[
+\begin{array}{r}
+0111\\
++1011\\ \hline
+1\,0010
+\end{array}
+\]
+
+\[
+\text{discard carry}
+\]
+
+\[
+\boxed{0010=2}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Fixed-Point Representation}
+% ============================================================
+
+A binary number may represent an integer, a fraction, or a mixed quantity.
+
+The binary point itself does not ordinarily need to occupy a physical storage
+position. Instead, its location can be assumed.
+
+In \emph{fixed-point representation}, the binary point always occupies an
+assumed fixed position.
+
+Two common arrangements are:
+
+\begin{itemize}
+    \item binary point assumed at the extreme right, producing integers;
+    \item binary point assumed at the extreme left, producing fractions.
+\end{itemize}
+
+\begin{whiteboard}
+\[
+\boxed{\text{Fixed point: the radix-point position is assumed.}}
+\]
+
+\[
+\text{point at right}\Rightarrow\text{integer}
+\]
+
+\[
+\text{point at left}\Rightarrow\text{fraction}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Signed Integer Representation}
+% ============================================================
+
+A sign must also be represented with a bit.
+
+The convention used is
+
+\[
+0=\text{positive},
+\qquad
+1=\text{negative}.
+\]
+
+For negative integers, Mano discusses three representations:
+
+\begin{enumerate}
+    \item signed magnitude,
+    \item signed 1's complement,
+    \item signed 2's complement.
+\end{enumerate}
+
+Consider \(14\) in an 8-bit register.
+
+\[
++14=00001110.
+\]
+
+The three representations of \(-14\) are:
+
+\[
+\begin{array}{c|c}
+\text{Representation} & -14 \\ \hline
+\text{Signed magnitude} & 10001110\\
+\text{Signed 1's complement} & 11110001\\
+\text{Signed 2's complement} & 11110010
+\end{array}
+\]
+
+\begin{whiteboard}
+\[
+0=\text{positive sign},
+\qquad
+1=\text{negative sign}
+\]
+
+\[
++14=00001110
+\]
+
+\[
+\begin{array}{c|c}
+\text{Representation of }-14 & \text{Bits}\\ \hline
+\text{signed magnitude} & 10001110\\
+\text{1's complement} & 11110001\\
+\text{2's complement} & 11110010
+\end{array}
+\]
+\end{whiteboard}
+
+Signed magnitude resembles ordinary written arithmetic but makes computer
+arithmetic comparatively awkward.
+
+The 1's-complement representation also has the inconvenience of possessing
+two representations of zero:
+
+\[
++0
+\qquad\text{and}\qquad
+-0.
+\]
+
+For this reason, Mano's discussion of signed binary arithmetic concentrates
+on the 2's-complement system.
+
+\begin{whiteboard}
+\[
+\text{signed magnitude: awkward arithmetic}
+\]
+
+\[
+\text{1's complement: }+0\text{ and }-0
+\]
+
+\[
+\boxed{\text{2's complement is preferred for signed arithmetic.}}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Signed 2's-Complement Addition}
+% ============================================================
+
+The great advantage of 2's complement is that the arithmetic rule is extremely
+simple:
+
+\begin{enumerate}
+    \item Add both numbers, including their sign bits.
+    \item Discard any carry out of the sign-bit position.
+\end{enumerate}
+
+Negative results remain naturally expressed in 2's-complement form.
+
+\begin{whiteboard}
+\[
+\boxed{\text{2's-complement addition}}
+\]
+
+\[
+\text{Add all bits, including sign bits.}
+\]
+
+\[
+\text{Discard carry out of the sign bit.}
+\]
+\end{whiteboard}
+
+Consider
+
+\[
+(+6)+(-13).
+\]
+
+In eight bits,
+
+\[
++6=00000110.
+\]
+
+To represent \(-13\),
+
+\[
+13=00001101,
+\]
+
+so
+
+\[
+-13=11110011.
+\]
+
+Therefore,
+
+\[
+\begin{array}{r}
+00000110\\
++11110011\\ \hline
+11111001
+\end{array}
+\]
+
+The result has sign bit \(1\), so it is negative.
+
+Taking its 2's complement,
+
+\[
+11111001
+\rightarrow
+00000111.
+\]
+
+Thus,
+
+\[
+11111001=-7.
+\]
+
+\begin{whiteboard}
+\[
++6=00000110
+\]
+
+\[
+-13=11110011
+\]
+
+\[
+\begin{array}{r}
+00000110\\
++11110011\\ \hline
+11111001
+\end{array}
+\]
+
+\[
+11111001\xrightarrow{\text{2's comp.}}00000111
+\]
+
+\[
+\boxed{11111001=-7}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Signed 2's-Complement Subtraction}
+% ============================================================
+
+Subtraction follows directly from
+
+\[
+A-B=A+(-B).
+\]
+
+Therefore, to subtract \(B\) from \(A\):
+
+\begin{enumerate}
+    \item Take the 2's complement of \(B\).
+    \item Add it to \(A\).
+    \item Discard any carry out of the sign position.
+\end{enumerate}
+
+\begin{whiteboard}
+\[
+\boxed{A-B=A+(-B)}
+\]
+
+\[
+\boxed{\text{2's-complement the subtrahend, then add.}}
+\]
+\end{whiteboard}
+
+This means that the same basic binary addition circuitry can be used for both
+addition and subtraction.
+
+% ============================================================
+\section{Overflow}
+% ============================================================
+
+A computer register has finite width. If the true arithmetic result cannot fit
+within that width, an \emph{overflow} occurs.
+
+The interpretation of overflow depends upon whether the operands are
+unsigned or signed.
+
+% ------------------------------------------------------------
+\subsection{Unsigned Overflow}
+% ------------------------------------------------------------
+
+For unsigned numbers, overflow is indicated by a carry out of the most
+significant bit.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Unsigned overflow: carry out of the MSB}}
+\]
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Signed 2's-Complement Overflow}
+% ------------------------------------------------------------
+
+For signed 2's-complement numbers, the final carry alone does not determine
+overflow.
+
+Overflow can occur when two operands have the same sign but the stored result
+has the opposite sign.
+
+Thus:
+
+\[
+(+)+(+)\rightarrow(-)
+\]
+
+indicates overflow, and
+
+\[
+(-)+(-)\rightarrow(+)
+\]
+
+also indicates overflow.
+
+\begin{whiteboard}
+\[
+\boxed{
+\text{same-sign operands + opposite-sign result}
+\Rightarrow
+\text{overflow}}
+\]
+\end{whiteboard}
+
+Mano gives a hardware test based upon the carry into and carry out of the sign
+bit.
+
+Let
+
+\[
+C_{\text{in}}
+\]
+
+be the carry into the sign position and
+
+\[
+C_{\text{out}}
+\]
+
+be the carry out of it.
+
+Then
+
+\[
+V=C_{\text{in}}\oplus C_{\text{out}}.
+\]
+
+Therefore,
+
+\[
+C_{\text{in}}\neq C_{\text{out}}
+\]
+
+indicates overflow.
+
+\begin{whiteboard}
+\[
+\boxed{V=C_{\text{in sign}}\oplus C_{\text{out sign}}}
+\]
+
+\[
+C_{\text{in}}\neq C_{\text{out}}
+\Rightarrow
+V=1
+\]
+
+\[
+\boxed{\text{Overflow}}
+\]
+\end{whiteboard}
+
+An \(n\)-bit 2's-complement register represents values in the range
+
+\[
+-2^{n-1}
+\leq x \leq
+2^{n-1}-1.
+\]
+
+For eight bits,
+
+\[
+-128\leq x\leq127.
+\]
+
+Thus, although
+
+\[
+70+80=150,
+\]
+
+the value \(150\) cannot be represented as an 8-bit signed 2's-complement
+integer.
+
+\begin{whiteboard}
+\[
+\boxed{-2^{n-1}\leq x\leq2^{n-1}-1}
+\]
+
+For \(n=8\):
+
+\[
+-128\leq x\leq127
+\]
+
+\[
+70+80=150>127
+\]
+
+\[
+\boxed{\text{overflow}}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Decimal Fixed-Point Representation}
+% ============================================================
+
+Decimal values can also be stored and manipulated directly in a binary-coded
+form.
+
+Using BCD requires four bits for every decimal digit.
+
+For example,
+
+\[
+4385
+\]
+
+is represented as
+
+\[
+0100\ 0011\ 1000\ 0101.
+\]
+
+\begin{whiteboard}
+\[
+\boxed{\text{Decimal fixed point uses coded decimal digits.}}
+\]
+
+\[
+4385_{\text{BCD}}
+=
+0100\ 0011\ 1000\ 0101
+\]
+
+\[
+\boxed{4\text{ bits per decimal digit}}
+\]
+\end{whiteboard}
+
+Decimal representation requires more storage than the equivalent pure binary
+number, and decimal arithmetic circuitry is more complicated.
+
+Its advantage is that decimal-oriented input, output, and processing can be
+performed without repeatedly converting between decimal and binary forms.
+
+\begin{whiteboard}
+\[
+\text{BCD: more storage}
+\]
+
+\[
+\text{BCD arithmetic: more complex hardware}
+\]
+
+\[
+\text{advantage: convenient for decimal I/O and processing}
+\]
+\end{whiteboard}
+
+The decimal counterpart of binary 2's-complement arithmetic is the
+10's-complement system.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Decimal analogue of 2's complement: 10's complement}}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Floating-Point Representation}
+% ============================================================
+
+Fixed-point representation assumes that the radix point remains in one fixed
+position.
+
+Floating-point representation instead stores information that allows the
+effective radix-point position to vary.
+
+Mano expresses a floating-point quantity as
+
+\[
+m\times r^e,
+\]
+
+where
+
+\[
+m=\text{mantissa}
+\]
+
+and
+
+\[
+e=\text{exponent}.
+\]
+
+The radix \(r\) and the location of the radix point within the mantissa are
+understood rather than explicitly stored.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Floating point}=m\times r^e}
+\]
+
+\[
+m=\text{mantissa}
+\]
+
+\[
+e=\text{exponent}
+\]
+\end{whiteboard}
+
+For example,
+
+\[
+6132.789
+=
+0.6132789\times10^4.
+\]
+
+\begin{whiteboard}
+\[
+6132.789
+=
+0.6132789\times10^4
+\]
+\end{whiteboard}
+
+The same principle applies in binary.
+
+For example,
+
+\[
+1001.11_2
+=
+0.100111_2\times2^4.
+\]
+
+\begin{whiteboard}
+\[
+1001.11_2
+=
+0.100111_2\times2^4
+\]
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Normalization}
+% ------------------------------------------------------------
+
+A floating-point number is \emph{normalized} when the most significant digit
+of the mantissa is nonzero.
+
+Normalization moves the radix point while changing the exponent by a
+corresponding amount so that the numerical value remains unchanged.
+
+For example,
+
+\[
+0.001101\times2^5
+\]
+
+may be normalized by shifting the mantissa two positions left:
+
+\[
+0.1101\times2^3.
+\]
+
+The value has not changed.
+
+\begin{whiteboard}
+\[
+\boxed{\text{normalized: most significant mantissa digit is nonzero}}
+\]
+
+\[
+0.001101\times2^5
+\]
+
+shift left two places:
+
+\[
+0.1101\times2^3
+\]
+
+\[
+\boxed{\text{same value}}
+\]
+
+\[
+\boxed{\text{Normalization maximizes available precision.}}
+\]
+\end{whiteboard}
+
+Floating-point arithmetic requires more complicated hardware than fixed-point
+arithmetic, but it permits a much wider range of numerical magnitudes.
+
+% ============================================================
+\section{Gray Code}
+% ============================================================
+
+The reflected binary code, usually called \emph{Gray code}, has the important
+property that adjacent values differ in only one bit.
+
+A portion of the Gray-code sequence is
+
+\[
+000,\ 001,\ 011,\ 010,\ 110,\ 111,\ldots
+\]
+
+\begin{whiteboard}
+\[
+\boxed{\text{Gray code: adjacent values differ by one bit.}}
+\]
+
+\[
+000\rightarrow001\rightarrow011\rightarrow010
+\]
+
+\[
+\rightarrow110\rightarrow111\rightarrow\cdots
+\]
+
+\[
+\boxed{\text{Only one bit changes at each step.}}
+\]
+\end{whiteboard}
+
+This property is useful when a physical or digital state passes from one value
+to the next because it reduces ambiguity during the transition.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Advantage: reduced ambiguity during transitions}}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Other Decimal Codes}
+% ============================================================
+
+BCD is not the only possible binary code for decimal digits.
+
+Mano also discusses:
+
+\begin{itemize}
+    \item 8421 BCD,
+    \item 2421 code,
+    \item Excess-3 code,
+    \item Excess-3 Gray code.
+\end{itemize}
+
+BCD may be viewed as an \(8421\) weighted code because the bit positions have
+weights
+
+\[
+8,\ 4,\ 2,\ 1.
+\]
+
+The 2421 code is another weighted code.
+
+The Excess-3 code is obtained by adding binary \(3\), or \(0011\), to the BCD
+representation of each decimal digit.
+
+The 2421 and Excess-3 codes have a self-complementing property: complementing
+all bits produces the code representation of the 9's complement of the
+decimal digit.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Other decimal codes}}
+\]
+
+\[
+\text{BCD}=8421\text{ weighted code}
+\]
+
+\[
+\text{2421: weighted and self-complementing}
+\]
+
+\[
+\text{Excess-3}=\text{BCD}+0011
+\]
+
+\[
+\boxed{
+\text{2421 and Excess-3: bit complement}
+\Rightarrow
+\text{9's complement}}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Other Alphanumeric Codes}
+% ============================================================
+
+Mano also identifies other character-code arrangements.
+
+ASCII uses seven bits for each character and commonly receives an additional
+parity bit during transmission.
+
+EBCDIC, associated with IBM equipment, uses eight bits per character.
+
+Some systems may also use shorter internal character codes when a smaller
+character set is sufficient.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Alphanumeric codes}}
+\]
+
+\[
+\text{ASCII: 7-bit character code}
+\]
+
+\[
+\text{EBCDIC: 8-bit character code}
+\]
+
+\[
+\text{smaller internal codes may also be used}
+\]
+\end{whiteboard}
+
+% ============================================================
+\section{Error Detection and Parity}
+% ============================================================
+
+Binary information sent through a communication medium may be affected by
+noise.
+
+A transmitted
+
+\[
+1
+\]
+
+may become
+
+\[
+0,
+\]
+
+or a transmitted
+
+\[
+0
+\]
+
+may become
+
+\[
+1.
+\]
+
+An error-detection code adds information that allows the receiver to recognize
+that some transmission errors have occurred.
+
+The most common method discussed by Mano is the \emph{parity bit}.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Transmission error: }1\leftrightarrow0}
+\]
+
+\[
+\boxed{\text{Parity bit: extra bit used for error detection}}
+\]
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Even and Odd Parity}
+% ------------------------------------------------------------
+
+With \emph{even parity}, the parity bit is chosen so that the total number of
+\(1\)'s in the transmitted word is even.
+
+With \emph{odd parity}, the parity bit is chosen so that the total number of
+\(1\)'s is odd.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Even parity: total number of 1s is even}}
+\]
+
+\[
+\boxed{\text{Odd parity: total number of 1s is odd}}
+\]
+\end{whiteboard}
+
+Suppose the message is
+
+\[
+1011.
+\]
+
+It contains three \(1\)'s.
+
+To obtain even parity, the parity bit must therefore be
+
+\[
+P=1,
+\]
+
+giving four \(1\)'s in the transmitted word.
+
+\begin{whiteboard}
+Message:
+
+\[
+1011
+\]
+
+Number of \(1\)'s:
+
+\[
+3
+\]
+
+For even parity:
+
+\[
+P=1
+\]
+
+Total number of \(1\)'s:
+
+\[
+4
+\]
+
+\[
+\boxed{\text{even parity satisfied}}
+\]
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Parity and Exclusive-OR}
+% ------------------------------------------------------------
+
+Parity generation connects directly to the exclusive-OR operation studied in
+digital logic.
+
+For a three-bit message \(x,y,z\),
+
+\[
+P_{\text{even}}
+=
+x\oplus y\oplus z.
+\]
+
+The exclusive-OR function is \(1\) whenever an odd number of its inputs are
+\(1\).
+
+Odd parity therefore requires the complement:
+
+\[
+P_{\text{odd}}
+=
+\overline{x\oplus y\oplus z}.
+\]
+
+\begin{whiteboard}
+\[
+\boxed{P_{\text{even}}=x\oplus y\oplus z}
+\]
+
+\[
+\boxed{
+P_{\text{odd}}
+=
+\overline{x\oplus y\oplus z}}
+\]
+
+\[
+\text{XOR is an odd function.}
+\]
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Parity Generator and Checker}
+% ------------------------------------------------------------
+
+At the sending end, a parity generator calculates the required parity bit.
+
+The message and parity bit are then transmitted.
+
+At the receiving end, a parity checker determines whether the received bit
+pattern still has the required parity.
+
+\begin{whiteboard}
+\[
+\text{message}
+\rightarrow
+\boxed{\text{parity generator}}
+\rightarrow
+\text{channel}
+\rightarrow
+\boxed{\text{parity checker}}
+\rightarrow
+\text{error indication}
+\]
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{What Parity Can and Cannot Detect}
+% ------------------------------------------------------------
+
+A single parity bit detects an odd number of changed bits.
+
+Thus it detects:
+
+\[
+1,\ 3,\ 5,\ldots
+\]
+
+bit errors.
+
+However, if an even number of bits change, the parity may remain correct and
+the error can go undetected.
+
+\begin{whiteboard}
+\[
+\boxed{\text{Parity detects an odd number of bit errors.}}
+\]
+
+\[
+1,\ 3,\ 5,\ldots
+\]
+
+\[
+\boxed{\text{An even number of bit errors may go undetected.}}
+\]
+\end{whiteboard}
+
+Parity therefore provides \emph{error detection}, not complete error protection
+and not automatic error correction.
+
+% ============================================================
+\section{Chapter 3 Summary}
+% ============================================================
+
+The fundamental theme of this chapter is that computers physically store
+binary information, but those bits acquire meaning only through an agreed
+representation.
+
+We have seen that bits can represent:
+
+\begin{itemize}
+    \item binary, octal, decimal, and hexadecimal quantities,
+    \item decimal digits through BCD,
+    \item characters through codes such as ASCII,
+    \item positive and negative integers,
+    \item fixed-point and floating-point quantities,
+    \item alternate codes such as Gray code,
+    \item and redundant information used for error detection.
+\end{itemize}
+
+The particularly important architectural consequence is that a representation
+is chosen not merely for human readability but also because it can simplify
+the hardware required to manipulate the information.
+
+Two's-complement representation is a prime example: subtraction can be
+reduced to addition, allowing common arithmetic hardware to serve both
+operations.
+
+\begin{whiteboard}
+\[
+\boxed{
+\text{bits}
+\rightarrow
+\text{number systems}
+\rightarrow
+\text{codes}
+\rightarrow
+\text{signed arithmetic}
+}
+\]
+
+\[
+\boxed{
+\text{fixed/floating point}
+\rightarrow
+\text{error detection}
+}
+\]
+
+\[
+\boxed{\text{Representation affects both meaning and hardware.}}
+\]
+\end{whiteboard}
+
+\end{document}
