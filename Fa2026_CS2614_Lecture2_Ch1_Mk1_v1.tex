@@ -1,0 +1,1390 @@
+\documentclass[11pt]{article}
+
+% ============================================================
+% Packages
+% ============================================================
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{graphicx}
+
+% ============================================================
+% General Formatting
+% ============================================================
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.65em}
+
+\setlist[itemize]{leftmargin=1.5em}
+\setlist[enumerate]{leftmargin=1.75em}
+
+\renewcommand{\arraystretch}{1.15}
+
+\graphicspath{{./}}
+
+% ============================================================
+% WHITEBOARD Environment
+% Everything inside is intended to be written, drawn, or
+% displayed as the live whiteboard packet for that topic.
+% ============================================================
+\newenvironment{whiteboard}
+{
+    \par\medskip
+    \hrule
+    \vspace{0.35em}
+    \noindent\textbf{\large WHITEBOARD}
+    \par\vspace{0.3em}
+    \hrule
+    \vspace{0.65em}
+}
+{
+    \vspace{0.45em}
+    \hrule
+    \par\medskip
+}
+
+% ============================================================
+% Textbook Reference Helpers
+% ============================================================
+\newcommand{\corresponds}[1]{%
+    \textit{Corresponds to Mano, Fig.~#1.}\par\smallskip
+}
+
+\newcommand{\seeMano}[1]{%
+    \textit{See Mano, Fig.~#1.}\par\smallskip
+}
+
+% ============================================================
+% Document
+% ============================================================
+\begin{document}
+
+\begin{center}
+    {\LARGE\textbf{CS2614 --- Computer System Architecture}}\\[0.45em]
+    {\Large\textbf{Chapter 1: Digital Logic Circuits}}\\[0.45em]
+    \textit{Based on M. Morris Mano,
+    Computer System Architecture, 3rd ed.}
+\end{center}
+
+% ============================================================
+\section{Digital Computers and Binary Information}
+% ============================================================
+
+A digital computer represents information using variables that take a limited
+number of discrete values. In practice, digital computers use two states,
+represented by the binary digits 0 and 1. A binary digit is called a
+\emph{bit}.
+
+Groups of bits may represent numbers, characters, instructions, or control
+information.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{digital}\Rightarrow\text{discrete values}}
+\qquad
+\boxed{\text{binary}\Rightarrow\{0,1\}}
+\]
+
+\[
+\boxed{\text{binary digit}=\text{bit}}
+\]
+
+\[
+\boxed{\text{Information is represented by groups of bits.}}
+\]
+
+\end{whiteboard}
+
+For example, when interpreted as a binary number,
+
+\[
+1001011_2
+=
+1(2^6)+1(2^3)+1(2^1)+1(2^0)
+=
+75_{10}.
+\]
+
+The same physical bit pattern may have a different meaning under a different
+code.
+
+\begin{whiteboard}
+
+\[
+1001011_2=75_{10}
+\]
+
+\[
+\boxed{
+\text{same bits}
+\rightarrow
+\text{number, character, or control information}
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Hardware, Software, and the Computer System}
+% ============================================================
+
+A computer system consists of hardware and software.
+
+Hardware is the physical equipment. Software consists of programs and data.
+A sequence of instructions for the computer is called a \emph{program}.
+
+The major hardware portions introduced by Mano are the CPU, memory, and
+input-output facilities.
+
+\begin{whiteboard}
+
+\seeMano{1-1}
+
+\[
+\boxed{\text{Computer System}=\text{Hardware}+\text{Software}}
+\]
+
+\[
+\boxed{\text{CPU: manipulate data + fetch/execute instructions}}
+\]
+
+\[
+\boxed{\text{Memory: store instructions + data}}
+\]
+
+\[
+\boxed{\text{I/O: communicate with the outside world}}
+\]
+
+\end{whiteboard}
+
+Mano distinguishes computer organization, computer design, and computer
+architecture.
+
+\begin{whiteboard}
+
+\[
+\begin{array}{c|l}
+\text{Organization}
+&
+\text{How hardware operates and connects}
+\\
+\text{Design}
+&
+\text{What hardware is used and how it is built}
+\\
+\text{Architecture}
+&
+\text{Structure and behavior seen by the user}
+\end{array}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Logic Gates}
+% ============================================================
+
+Binary information is represented physically by two recognizable signal
+states.
+
+Logic gates are hardware blocks that perform logical operations on those
+binary signals.
+
+A gate can be described by its graphic symbol, Boolean expression, and truth
+table.
+
+\begin{whiteboard}
+
+\corresponds{1-2}
+
+\begin{center}
+\includegraphics[
+    height=0.90\textheight,
+    keepaspectratio
+]{figure_1_2_DigitalLogicGates.png}
+\end{center}
+
+\[
+\boxed{
+\text{graphic symbol}
+\longleftrightarrow
+\text{Boolean expression}
+\longleftrightarrow
+\text{truth table}
+}
+\]
+
+\end{whiteboard}
+
+The three fundamental operations are AND, OR, and complement.
+
+NAND and NOR are complemented forms of AND and OR. XOR is 1 when its two
+inputs differ; XNOR is its complement.
+
+For more than two inputs, Mano describes XOR as an \emph{odd function}: the
+output is 1 when an odd number of inputs are 1.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{AND: }x=AB}
+\qquad
+\boxed{\text{OR: }x=A+B}
+\qquad
+\boxed{\text{NOT: }x=A'}
+\]
+
+\[
+\boxed{\text{NAND: }x=(AB)'}
+\qquad
+\boxed{\text{NOR: }x=(A+B)'}
+\]
+
+\[
+\boxed{\text{XOR: }x=A\oplus B}
+\qquad
+\boxed{\text{XNOR: }x=(A\oplus B)'}
+\]
+
+\[
+A\oplus B=1
+\iff
+A\neq B
+\]
+
+\[
+\boxed{\text{XOR is an odd function.}}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Boolean Algebra}
+% ============================================================
+
+Boolean algebra deals with binary variables and the operations AND, OR, and
+complement.
+
+A Boolean function may be represented algebraically, by a truth table, or by
+a logic diagram.
+
+For example,
+
+\[
+F=x+y'z.
+\]
+
+\begin{whiteboard}
+
+\seeMano{1-3}
+
+\[
+\boxed{\text{Boolean variables}\in\{0,1\}}
+\]
+
+\[
+AB\;(\text{AND}),
+\qquad
+A+B\;(\text{OR}),
+\qquad
+A'\;(\text{complement})
+\]
+
+\[
+F=x+y'z
+\]
+
+\[
+\boxed{
+\text{expression}
+\longleftrightarrow
+\text{truth table}
+\longleftrightarrow
+\text{logic diagram}
+}
+\]
+
+\end{whiteboard}
+
+The following identities are especially useful when simplifying Boolean
+expressions.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{Useful Boolean Identities}}
+\]
+
+\[
+x+0=x,
+\qquad
+x\cdot1=x,
+\qquad
+x+1=1,
+\qquad
+x\cdot0=0
+\]
+
+\[
+x+x=x,
+\qquad
+xx=x,
+\qquad
+x+x'=1,
+\qquad
+xx'=0
+\]
+
+\[
+x(y+z)=xy+xz
+\qquad
+(x')'=x
+\]
+
+\end{whiteboard}
+
+Simplification matters because a simpler Boolean expression can require fewer
+logic gates.
+
+Mano's example is
+
+\[
+F=ABC+ABC'+A'C.
+\]
+
+Factoring the first two terms gives
+
+\[
+F
+=
+AB(C+C')+A'C
+=
+AB+A'C.
+\]
+
+\begin{whiteboard}
+
+\seeMano{1-6}
+
+\[
+F=ABC+ABC'+A'C
+\]
+
+\[
+=AB(C+C')+A'C
+\]
+
+\[
+C+C'=1
+\]
+
+\[
+\boxed{F=AB+A'C}
+\]
+
+\[
+\boxed{
+\text{simpler expression}
+\Rightarrow
+\text{simpler hardware}
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{DeMorgan's Theorems}
+% ============================================================
+
+DeMorgan's theorems are
+
+\[
+(x+y)'=x'y'
+\]
+
+and
+
+\[
+(xy)'=x'+y'.
+\]
+
+They are important for complementing Boolean expressions and for
+understanding the alternate forms of NAND and NOR gates.
+
+\begin{whiteboard}
+
+\[
+\boxed{(x+y)'=x'y'}
+\qquad
+\boxed{(xy)'=x'+y'}
+\]
+
+\[
+\boxed{
+\text{Complement each variable and interchange AND}
+\leftrightarrow
+\text{OR}
+}
+\]
+
+\end{whiteboard}
+
+Mano's alternate NOR and NAND symbols are direct applications of
+DeMorgan's theorem.
+
+\begin{whiteboard}
+
+\corresponds{1-4 and 1-5}
+
+\begin{center}
+\includegraphics[
+    width=0.78\textwidth
+]{figure_1_4_and_1_5.png}
+\end{center}
+
+\[
+\boxed{(x+y)'=x'y'}
+\qquad
+\boxed{(xy)'=x'+y'}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Karnaugh Maps}
+% ============================================================
+
+Boolean algebra can simplify expressions, but the next algebraic step is not
+always obvious.
+
+The Karnaugh map, or K-map, provides a visual procedure for simplification.
+
+Each square represents one minterm. For a function of \(n\) binary variables,
+there are \(2^n\) minterms.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{minterm}=\text{one input combination}}
+\]
+
+\[
+n\text{ variables}
+\Rightarrow
+2^n\text{ minterms}
+\]
+
+\[
+ABC=101
+\Rightarrow
+AB'C
+\Rightarrow
+m_5
+\]
+
+\[
+\boxed{
+F(A,B,C)=\Sigma(3,4,6,7)
+}
+\]
+
+\end{whiteboard}
+
+The cells are arranged so that adjacent squares differ in only one variable.
+
+Opposite edges are also adjacent. Groups contain a power-of-two number of
+cells.
+
+\begin{whiteboard}
+
+\corresponds{1-7}
+
+\begin{center}
+\includegraphics[
+    width=0.68\textwidth
+]{figure_1_7.png}
+\end{center}
+
+\[
+\boxed{
+\text{Adjacent squares differ in one variable}
+}
+\]
+
+\[
+\boxed{\text{Opposite edges are adjacent}}
+\qquad
+\boxed{\text{Group sizes: }1,2,4,8,\ldots}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{A Basic Three-Variable Example}
+% ------------------------------------------------------------
+
+For Mano's example
+
+\[
+F(A,B,C)=\Sigma(3,4,6,7),
+\]
+
+the groups produce the terms \(BC\) and \(AC'\).
+
+Therefore,
+
+\[
+F=BC+AC'.
+\]
+
+\begin{whiteboard}
+
+\corresponds{1-8}
+
+\begin{center}
+\includegraphics[
+    width=0.50\textwidth
+]{figure_1_8.png}
+\end{center}
+
+\[
+3,7
+\Rightarrow
+BC
+\]
+
+\[
+4,6
+\Rightarrow
+AC'
+\]
+
+\[
+\boxed{
+F=BC+AC'
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Standard Forms and Don't-Care Conditions}
+% ------------------------------------------------------------
+
+Grouping 1s gives a sum-of-products form.
+
+Grouping 0s can be used to obtain a product-of-sums form.
+
+A don't-care condition may be taken as either 0 or 1 if that choice simplifies
+the function.
+
+\begin{whiteboard}
+
+\seeMano{1-11 through 1-13}
+
+\[
+\boxed{
+\text{Group 1s}
+\Rightarrow
+\text{sum of products}
+}
+\]
+
+\[
+\boxed{
+\text{Group 0s}
+\Rightarrow
+\text{product of sums}
+}
+\]
+
+\[
+\boxed{
+x=
+\text{don't care: use as 0 or 1 only if helpful}
+}
+\]
+
+\end{whiteboard}
+
+For Mano's don't-care example,
+
+\[
+F(A,B,C)=\Sigma(0,2,6)
+\]
+
+and
+
+\[
+d(A,B,C)=\Sigma(1,3,5).
+\]
+
+Using the useful don't-care entries gives
+
+\[
+F=A'+BC'.
+\]
+
+\begin{whiteboard}
+
+\corresponds{1-14}
+
+\begin{center}
+\includegraphics[
+    width=0.52\textwidth
+]{figure_1_14.png}
+\end{center}
+
+\[
+\boxed{
+F=A'+BC'
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Combinational Circuits}
+% ============================================================
+
+A combinational circuit is an interconnection of logic gates whose outputs at
+any time are functions only of the present inputs.
+
+It contains no stored state.
+
+\begin{whiteboard}
+
+\seeMano{1-15}
+
+\[
+\boxed{
+\text{Combinational circuit: Output}
+=
+f(\text{present inputs})
+}
+\]
+
+\[
+\boxed{\text{No stored state}}
+\]
+
+\end{whiteboard}
+
+Mano distinguishes analysis from design.
+
+Analysis begins with a circuit and finds its Boolean functions or truth table.
+
+Design begins with a problem statement and ends with a logic diagram.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{Analysis: circuit}
+\rightarrow
+\text{Boolean functions}
+\rightarrow
+\text{truth table}
+}
+\]
+
+\[
+\boxed{
+\text{Design: problem}
+\rightarrow
+\text{variables}
+\rightarrow
+\text{truth table}
+\rightarrow
+\text{simplify}
+\rightarrow
+\text{logic diagram}
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Half-Adder and Full-Adder}
+% ============================================================
+
+A half-adder adds two binary digits \(x\) and \(y\).
+
+It produces a sum \(S\) and carry \(C\).
+
+\[
+S=x\oplus y,
+\qquad
+C=xy.
+\]
+
+\begin{whiteboard}
+
+\seeMano{1-16}
+
+\[
+\boxed{\text{Half-Adder}}
+\]
+
+\[
+\begin{array}{cc|cc}
+x&y&C&S\\
+\hline
+0&0&0&0\\
+0&1&0&1\\
+1&0&0&1\\
+1&1&1&0
+\end{array}
+\]
+
+\[
+\boxed{S=x\oplus y}
+\qquad
+\boxed{C=xy}
+\]
+
+\end{whiteboard}
+
+A full-adder adds two significant bits and a carry from the previous lower
+position.
+
+Mano uses inputs \(x\), \(y\), and \(z\), with outputs \(S\) and \(C\).
+
+\[
+S=x\oplus y\oplus z
+\]
+
+and
+
+\[
+C=xy+(x\oplus y)z.
+\]
+
+The circuit can be constructed from two half-adders and an OR gate.
+
+\begin{whiteboard}
+
+\corresponds{1-18}
+
+\begin{center}
+\includegraphics[
+    width=0.78\textwidth
+]{figure_1_18.png}
+\end{center}
+
+\[
+\boxed{
+S=x\oplus y\oplus z
+}
+\]
+
+\[
+\boxed{
+C=xy+(x\oplus y)z
+}
+\]
+
+\[
+\boxed{
+\text{Full-adder}
+=
+\text{two half-adders}
++
+\text{OR}
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Sequential Circuits and Flip-Flops}
+% ============================================================
+
+A sequential circuit contains storage.
+
+Its behavior therefore depends on both the present input and the present state
+of the storage elements.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{Combinational: }Y=f(X)
+}
+\]
+
+\[
+\boxed{
+\text{Sequential: }Y=f(X,\text{present state})
+}
+\]
+
+\[
+\boxed{
+\text{next state}
+=
+g(X,\text{present state})
+}
+\]
+
+\end{whiteboard}
+
+Clocked synchronous sequential circuits use a clock signal to coordinate state
+changes.
+
+A flip-flop is a binary storage element capable of storing one bit.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{Clock}
+\Rightarrow
+\text{synchronizes state changes}
+}
+\]
+
+\[
+\boxed{
+\text{Flip-flop}
+=
+\text{1-bit storage element}
+}
+\]
+
+\[
+Q(t)=\text{present state}
+\qquad
+Q(t+1)=\text{next state}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{SR Flip-Flop}
+% ------------------------------------------------------------
+
+The SR flip-flop provides set and reset inputs.
+
+The input combination
+
+\[
+S=R=1
+\]
+
+produces an indeterminate next state.
+
+\begin{whiteboard}
+
+\corresponds{1-19}
+
+\begin{center}
+\includegraphics[
+    width=0.66\textwidth
+]{figure_1_19.png}
+\end{center}
+
+\[
+\boxed{
+S=R=1
+\Rightarrow
+\text{indeterminate}
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{D Flip-Flop}
+% ------------------------------------------------------------
+
+For a D flip-flop, the next state is simply the D input sampled at the active
+clock transition:
+
+\[
+Q(t+1)=D.
+\]
+
+\begin{whiteboard}
+
+\corresponds{1-20}
+
+\begin{center}
+\includegraphics[
+    width=0.62\textwidth
+]{figure_1_20.png}
+\end{center}
+
+\[
+\boxed{
+Q(t+1)=D
+}
+\]
+
+\[
+\boxed{
+\text{active clock transition: }Q\leftarrow D
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{JK and T Flip-Flops}
+% ------------------------------------------------------------
+
+The JK flip-flop replaces the indeterminate SR condition with a toggle.
+
+When
+
+\[
+J=K=1,
+\]
+
+the next state is the complement of the present state.
+
+The T flip-flop has a single toggle input.
+
+When \(T=0\), the state does not change. When \(T=1\), the state complements.
+
+\begin{whiteboard}
+
+\corresponds{1-21 and 1-22}
+
+\begin{center}
+\includegraphics[
+    width=0.67\textwidth
+]{figure_1_21_and_1_22.png}
+\end{center}
+
+\[
+\boxed{
+J=K=1
+\Rightarrow
+\text{toggle}
+}
+\]
+
+\[
+\boxed{
+Q(t+1)=Q(t)\oplus T
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Edge Triggering}
+% ------------------------------------------------------------
+
+An edge-triggered flip-flop changes state only at a designated transition of
+the clock.
+
+A positive-edge device responds to
+
+\[
+0\rightarrow1,
+\]
+
+while a negative-edge device responds to
+
+\[
+1\rightarrow0.
+\]
+
+The data input must also satisfy setup-time and hold-time requirements around
+the active transition.
+
+\begin{whiteboard}
+
+\corresponds{1-23}
+
+\begin{center}
+\includegraphics[
+    width=0.78\textwidth
+]{figure_1_23.png}
+\end{center}
+
+\[
+\boxed{
+\text{positive edge: }0\rightarrow1
+}
+\qquad
+\boxed{
+\text{negative edge: }1\rightarrow0
+}
+\]
+
+\[
+\boxed{
+\text{setup time: input stable before the active edge}
+}
+\]
+
+\[
+\boxed{
+\text{hold time: input stable after the active edge}
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Characteristic and Excitation Tables}
+% ============================================================
+
+A characteristic table specifies the next state when the flip-flop inputs and
+present state are known.
+
+An excitation table works in the reverse direction: it specifies which inputs
+are needed to obtain a desired state transition.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{Characteristic: inputs}+Q(t)
+\rightarrow
+Q(t+1)
+}
+\]
+
+\[
+\boxed{
+\text{Excitation: }Q(t)+Q(t+1)
+\rightarrow
+\text{required FF inputs}
+}
+\]
+
+\end{whiteboard}
+
+The JK excitation table is especially useful in Mano's counter design.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{JK Excitation Table}}
+\]
+
+\[
+\begin{array}{cc|cc}
+Q(t)&Q(t+1)&J&K\\
+\hline
+0&0&0&x\\
+0&1&1&x\\
+1&0&x&1\\
+1&1&x&0
+\end{array}
+\]
+
+\[
+\boxed{x=\text{don't care}}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Sequential-Circuit Description and Design}
+% ============================================================
+
+A clocked sequential circuit combines combinational logic and flip-flops.
+
+The combinational part receives external inputs and present-state values. It
+produces external outputs and the signals that determine the next flip-flop
+states.
+
+Mano's example with two D flip-flops uses the input equations
+
+\[
+D_A=Ax+Bx,
+\qquad
+D_B=A'x,
+\]
+
+and the external output
+
+\[
+y=Ax'+Bx'.
+\]
+
+\begin{whiteboard}
+
+\seeMano{1-24 and 1-25}
+
+\[
+\boxed{
+\text{next state}
+=
+f(\text{present state, inputs})
+}
+\]
+
+\[
+\boxed{
+\text{outputs}
+=
+g(\text{present state, inputs})
+}
+\]
+
+\[
+\boxed{D_A=Ax+Bx}
+\qquad
+\boxed{D_B=A'x}
+\]
+
+\[
+\boxed{y=Ax'+Bx'}
+\]
+
+\end{whiteboard}
+
+A state table relates present state and input to next state and output.
+
+A state diagram represents the same information graphically.
+
+\begin{whiteboard}
+
+\seeMano{1-26}
+
+\[
+\boxed{
+\text{present state + input}
+\rightarrow
+\text{next state + output}
+}
+\]
+
+\[
+\boxed{
+\text{state diagram: circle}
+=
+\text{state}
+}
+\]
+
+\[
+\boxed{
+\text{arrow}
+=
+\text{transition}
+}
+\qquad
+\boxed{
+x/y
+=
+\text{input/output}
+}
+\]
+
+\end{whiteboard}
+
+The general design path is:
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{specification}
+\rightarrow
+\text{state diagram}
+\rightarrow
+\text{state table}
+}
+\]
+
+\[
+\boxed{
+\rightarrow
+\text{choose FF type}
+\rightarrow
+\text{excitation table}
+\rightarrow
+\text{K-maps}
+}
+\]
+
+\[
+\boxed{
+\rightarrow
+\text{FF input equations}
+\rightarrow
+\text{logic circuit}
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Design Example: 2-Bit Binary Counter}
+% ============================================================
+
+Mano's final example is a 2-bit binary counter controlled by an input \(x\).
+
+When \(x=1\), the circuit advances through the binary count sequence.
+
+When \(x=0\), the present state is held.
+
+\begin{whiteboard}
+
+\corresponds{1-27}
+
+\begin{center}
+\includegraphics[
+    width=0.48\textwidth
+]{figure_1_27.png}
+\end{center}
+
+\[
+\boxed{
+x=1:
+\quad
+00
+\rightarrow
+01
+\rightarrow
+10
+\rightarrow
+11
+\rightarrow
+00
+}
+\]
+
+\[
+\boxed{
+x=0:
+\quad
+\text{hold present state}
+}
+\]
+
+\end{whiteboard}
+
+Using the JK excitation table and K-map simplification, Mano obtains the four
+flip-flop input equations
+
+\[
+J_A=Bx,
+\qquad
+K_A=Bx,
+\qquad
+J_B=x,
+\qquad
+K_B=x.
+\]
+
+\begin{whiteboard}
+
+\corresponds{1-28}
+
+\begin{center}
+\includegraphics[
+    width=0.70\textwidth
+]{figure_1_28.png}
+\end{center}
+
+\[
+\boxed{
+J_A=K_A=Bx
+}
+\]
+
+\[
+\boxed{
+J_B=K_B=x
+}
+\]
+
+\end{whiteboard}
+
+The resulting hardware contains two JK flip-flops and one AND gate.
+
+\begin{whiteboard}
+
+\corresponds{1-29}
+
+\begin{center}
+\includegraphics[
+    width=0.54\textwidth
+]{figure_1_29.png}
+\end{center}
+
+\[
+\boxed{
+\text{state diagram}
+\rightarrow
+\text{state table}
+\rightarrow
+\text{excitation table}
+}
+\]
+
+\[
+\boxed{
+\rightarrow
+\text{K-maps}
+\rightarrow
+\text{FF equations}
+\rightarrow
+\text{hardware}
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Chapter Summary}
+% ============================================================
+
+Chapter 1 begins with binary information and logic gates, develops Boolean
+algebra and K-map simplification, uses them to design combinational circuits,
+and then introduces flip-flops and stored state to build sequential circuits.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{bits}
+\rightarrow
+\text{logic gates}
+\rightarrow
+\text{Boolean algebra}
+\rightarrow
+\text{K-maps}
+}
+\]
+
+\[
+\boxed{
+\rightarrow
+\text{combinational circuits}
+\rightarrow
+\text{flip-flops}
+\rightarrow
+\text{sequential circuits}
+}
+\]
+
+\[
+\boxed{
+\text{Combinational: present input only}
+}
+\]
+
+\[
+\boxed{
+\text{Sequential: present input + present state}
+}
+\]
+
+\end{whiteboard}
+
+\end{document}
