@@ -1,0 +1,1740 @@
+\documentclass[11pt]{article}
+
+% ============================================================
+% Packages
+% ============================================================
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{graphicx}
+
+% ============================================================
+% General Formatting
+% ============================================================
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.65em}
+
+\setlist[itemize]{leftmargin=1.5em}
+\setlist[enumerate]{leftmargin=1.75em}
+
+\renewcommand{\arraystretch}{1.15}
+
+% Screenshots are assumed to be in the same directory as this .tex file.
+\graphicspath{{./}}
+
+% ============================================================
+% WHITEBOARD Environment
+% ============================================================
+\newenvironment{whiteboard}
+{
+    \par\medskip
+    \hrule
+    \vspace{0.35em}
+    \noindent\textbf{\large WHITEBOARD}
+    \par\vspace{0.3em}
+    \hrule
+    \vspace{0.65em}
+}
+{
+    \vspace{0.45em}
+    \hrule
+    \par\medskip
+}
+
+% ============================================================
+% Textbook Reference Helper
+% ============================================================
+\newcommand{\corresponds}[1]{%
+    \textit{Corresponds to Mano, Fig.~#1.}\par\smallskip
+}
+
+% ============================================================
+% Document
+% ============================================================
+\begin{document}
+
+\begin{center}
+    {\LARGE\textbf{CS2614 --- Computer System Architecture}}\\[0.45em]
+    {\Large\textbf{Chapter 2: Digital Components}}\\[0.45em]
+    \textit{Based on M. Morris Mano,
+    Computer System Architecture, 3rd ed.}
+\end{center}
+
+% ============================================================
+\section{Integrated Circuits}
+% ============================================================
+
+Digital circuits are constructed with integrated circuits.
+
+An integrated circuit, or IC, is a small semiconductor chip containing
+electronic components interconnected to perform one or more digital
+functions.
+
+As integrated-circuit technology developed, progressively larger numbers of
+gates could be placed within a single package.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{IC}
+=
+\text{interconnected digital circuitry on one chip}
+}
+\]
+
+\[
+\begin{array}{c|l}
+\text{SSI}
+&
+\text{several gates}
+\\
+\text{MSI}
+&
+\text{approximately }10\text{--}200\text{ gates}
+\\
+\text{LSI}
+&
+\text{hundreds to thousands of gates}
+\\
+\text{VLSI}
+&
+\text{thousands of gates and beyond}
+\end{array}
+\]
+
+\end{whiteboard}
+
+Integrated circuits are also classified according to their digital logic
+family.
+
+Mano identifies TTL, ECL, MOS, and CMOS as major families.
+
+TTL became a widely used standard family.
+
+ECL is associated with high-speed operation.
+
+MOS technology permits high component density.
+
+CMOS is particularly useful when low power consumption is important.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{Digital Logic Families}}
+\]
+
+\[
+\begin{array}{c|l}
+\text{TTL}
+&
+\text{widely used standard family}
+\\
+\text{ECL}
+&
+\text{high speed}
+\\
+\text{MOS}
+&
+\text{high component density}
+\\
+\text{CMOS}
+&
+\text{low power consumption}
+\end{array}
+\]
+
+\end{whiteboard}
+
+The remainder of the chapter introduces digital components that serve as
+reusable building blocks in computer organization.
+
+% ============================================================
+\section{Decoders}
+% ============================================================
+
+A binary code of \(n\) bits can represent as many as
+
+\[
+2^n
+\]
+
+distinct combinations.
+
+A decoder is a combinational circuit that converts an \(n\)-bit coded input
+into as many as \(2^n\) distinct output lines.
+
+A decoder with \(n\) inputs and \(m\) outputs is commonly called an
+\(n\)-to-\(m\)-line decoder, where
+
+\[
+m\leq 2^n.
+\]
+
+\begin{whiteboard}
+
+\[
+\boxed{
+n\text{-to-}m\text{ decoder},
+\qquad
+m\leq2^n
+}
+\]
+
+For the full decoding case:
+
+\[
+\boxed{
+n\text{ inputs}
+\rightarrow
+2^n\text{ outputs}
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{3-to-8-Line Decoder}
+% ------------------------------------------------------------
+
+A 3-to-8-line decoder accepts three binary inputs and produces eight output
+lines.
+
+Each output corresponds to one of the eight possible combinations of the
+three input variables.
+
+When enabled, exactly one output is active for a given input combination.
+
+\begin{whiteboard}
+
+\corresponds{2-1}
+
+\begin{center}
+\includegraphics[
+    width=0.90\textwidth
+]{1_fig_2_1.png}
+\end{center}
+
+\[
+A_2A_1A_0
+\rightarrow
+D_0,D_1,\ldots,D_7
+\]
+
+\[
+\boxed{
+\text{one output corresponds to each 3-bit combination}
+}
+\]
+
+\end{whiteboard}
+
+The decoder can also be interpreted as a binary-to-octal converter.
+
+For example,
+
+\[
+A_2A_1A_0=110
+\]
+
+selects output
+
+\[
+D_6.
+\]
+
+\begin{whiteboard}
+
+\[
+A_2A_1A_0=110_2=6_{10}
+\]
+
+\[
+\boxed{D_6=1}
+\]
+
+All other decoder outputs:
+
+\[
+D_i=0
+\qquad
+(i\neq6)
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Enable Input}
+% ------------------------------------------------------------
+
+Commercial decoders normally contain one or more enable inputs.
+
+For the decoder of Fig.~2-1, the circuit is enabled when
+
+\[
+E=1.
+\]
+
+When
+
+\[
+E=0,
+\]
+
+all outputs are 0 regardless of the values of the three data inputs.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+E=0
+\Rightarrow
+D_0=D_1=\cdots=D_7=0
+}
+\]
+
+\[
+\boxed{
+E=1
+\Rightarrow
+\text{normal decoding}
+}
+\]
+
+When enabled:
+
+\[
+\boxed{
+\text{exactly one output}=1
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{NAND-Gate Decoder and Active-Low Logic}
+% ------------------------------------------------------------
+
+A decoder may also be constructed using NAND gates.
+
+In this arrangement the outputs may be generated in complemented form.
+
+The decoder of Fig.~2-2 is enabled when its complemented enable input is 0.
+When enabled, exactly one output is 0 and the remaining outputs are 1.
+
+\begin{whiteboard}
+
+\corresponds{2-2}
+
+\begin{center}
+\includegraphics[
+    width=0.90\textwidth
+]{2_fig_2_2.png}
+\end{center}
+
+\[
+\boxed{
+\text{active-high signal: asserted}=1
+}
+\]
+
+\[
+\boxed{
+\text{active-low signal: asserted}=0
+}
+\]
+
+For this decoder:
+
+\[
+\boxed{
+\bar E=0
+\Rightarrow
+\text{enabled}
+}
+\]
+
+\[
+\boxed{
+\text{exactly one output}=0
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Decoder Expansion}
+% ------------------------------------------------------------
+
+Enable inputs make it possible to combine smaller decoders into a larger
+decoder.
+
+Mano demonstrates this by constructing a 3-to-8-line decoder from two
+2-to-4-line decoders.
+
+The two least significant input bits are applied to both smaller decoders.
+
+The most significant bit determines which decoder is enabled.
+
+\begin{whiteboard}
+
+\corresponds{2-3}
+
+\begin{center}
+\includegraphics[
+    width=0.66\textwidth
+]{3_fig_2_3.png}
+\end{center}
+
+\[
+A_1,A_0
+\rightarrow
+\text{both 2-to-4 decoders}
+\]
+
+\[
+A_2=0
+\Rightarrow
+D_0\text{--}D_3
+\]
+
+\[
+A_2=1
+\Rightarrow
+D_4\text{--}D_7
+\]
+
+\[
+\boxed{
+\text{Enable inputs allow component expansion}
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Encoders}
+% ------------------------------------------------------------
+
+An encoder performs the inverse operation of a decoder.
+
+A decoder converts a binary code into one of many outputs.
+
+An encoder converts one active input line into a binary code.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{Decoder: code}
+\rightarrow
+\text{one-of-many}
+}
+\]
+
+\[
+\boxed{
+\text{Encoder: one-of-many}
+\rightarrow
+\text{code}
+}
+\]
+
+\end{whiteboard}
+
+For an octal-to-binary encoder, eight input lines correspond to the octal
+digits 0 through 7 and three output lines produce the equivalent binary code.
+
+The circuit assumes that only one input is active at a time.
+
+The output equations are
+
+\[
+A_0=D_1+D_3+D_5+D_7,
+\]
+
+\[
+A_1=D_2+D_3+D_6+D_7,
+\]
+
+\[
+A_2=D_4+D_5+D_6+D_7.
+\]
+
+\begin{whiteboard}
+
+\[
+\boxed{
+8\text{-to-}3\text{ encoder}
+}
+\]
+
+\[
+\boxed{
+\text{Only one input is assumed to be }1
+}
+\]
+
+\[
+A_0=D_1+D_3+D_5+D_7
+\]
+
+\[
+A_1=D_2+D_3+D_6+D_7
+\]
+
+\[
+A_2=D_4+D_5+D_6+D_7
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Multiplexers}
+% ============================================================
+
+A multiplexer is a combinational circuit that selects binary information from
+one of several data input lines and directs the selected value to a single
+output.
+
+A \(2^n\)-to-1 multiplexer contains
+
+\[
+2^n
+\]
+
+data input lines and
+
+\[
+n
+\]
+
+selection inputs.
+
+The multiplexer is therefore also called a \emph{data selector}.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+2^n\text{-to-}1\text{ MUX}
+}
+\]
+
+\[
+2^n\text{ data inputs}
+\]
+
+\[
+n\text{ selection inputs}
+\]
+
+\[
+1\text{ output}
+\]
+
+\[
+\boxed{\text{MUX}=\text{data selector}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{4-to-1 Multiplexer}
+% ------------------------------------------------------------
+
+A 4-to-1 multiplexer has four data inputs,
+
+\[
+I_0,I_1,I_2,I_3,
+\]
+
+two selection inputs,
+
+\[
+S_1,S_0,
+\]
+
+and one output,
+
+\[
+Y.
+\]
+
+\begin{whiteboard}
+
+\corresponds{2-4}
+
+\begin{center}
+\includegraphics[
+    width=0.82\textwidth
+]{4_fig_2_4.png}
+\end{center}
+
+\[
+\begin{array}{cc|c}
+S_1&S_0&Y\\
+\hline
+0&0&I_0\\
+0&1&I_1\\
+1&0&I_2\\
+1&1&I_3
+\end{array}
+\]
+
+\end{whiteboard}
+
+For example,
+
+\[
+S_1S_0=10
+\]
+
+selects input
+
+\[
+I_2.
+\]
+
+Thus,
+
+\[
+Y=I_2.
+\]
+
+\begin{whiteboard}
+
+\[
+S_1S_0=10
+\]
+
+\[
+\boxed{
+Y=I_2
+}
+\]
+
+\[
+\boxed{
+\text{selection lines determine which input reaches }Y
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Registers}
+% ============================================================
+
+A register is a group of flip-flops used to store binary information.
+
+Since each flip-flop stores one bit, an \(n\)-bit register contains \(n\)
+flip-flops and can store one \(n\)-bit binary quantity.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+n\text{-bit register}
+=
+n\text{ flip-flops}
+}
+\]
+
+\[
+\boxed{
+1\text{ flip-flop}
+=
+1\text{ stored bit}
+}
+\]
+
+\[
+\boxed{
+\text{register stores one binary word}
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{4-Bit Register}
+% ------------------------------------------------------------
+
+The simplest register consists of flip-flops sharing a common clock.
+
+In Mano's 4-bit register, four D flip-flops store four input bits.
+
+At the active clock transition, all four inputs are transferred into the
+register simultaneously.
+
+This operation is called a \emph{parallel load}.
+
+\begin{whiteboard}
+
+\corresponds{2-6}
+
+\begin{center}
+\includegraphics[
+    height=0.58\textheight,
+    keepaspectratio
+]{5_fig_2_6.png}
+\end{center}
+
+\[
+I_0,I_1,I_2,I_3
+\rightarrow
+A_0,A_1,A_2,A_3
+\]
+
+\[
+\boxed{
+\text{all bits load simultaneously}
+}
+\]
+
+\[
+\boxed{
+\text{simultaneous loading}
+=
+\text{parallel load}
+}
+\]
+
+\end{whiteboard}
+
+The clear input resets all flip-flops asynchronously.
+
+During normal clocked operation, the clear input remains inactive.
+
+% ------------------------------------------------------------
+\subsection{Register with Parallel Load Control}
+% ------------------------------------------------------------
+
+A computer normally has a continuously running master clock.
+
+A separate control signal is therefore needed to determine whether a
+particular register should accept new information.
+
+In the register of Fig.~2-7, the clock is continuously available while the
+Load input determines what appears at each D input.
+
+When
+
+\[
+\text{Load}=1,
+\]
+
+the external input is selected.
+
+When
+
+\[
+\text{Load}=0,
+\]
+
+the current register output is fed back to the D input so that the state is
+preserved.
+
+\begin{whiteboard}
+
+\corresponds{2-7}
+
+\begin{center}
+\includegraphics[
+    height=0.62\textheight,
+    keepaspectratio
+]{6_fig_2_7.png}
+\end{center}
+
+\[
+\boxed{
+\text{Load}=1
+\Rightarrow
+D_i=I_i
+}
+\]
+
+\[
+\boxed{
+\text{Load}=0
+\Rightarrow
+D_i=A_i
+}
+\]
+
+\[
+\boxed{
+\text{feedback provides the hold condition}
+}
+\]
+
+\end{whiteboard}
+
+The feedback path is necessary because the D flip-flop itself has no separate
+``no change'' input combination.
+
+% ============================================================
+\section{Shift Registers}
+% ============================================================
+
+A shift register is a register capable of shifting its binary information from
+one stage to the next.
+
+The output of each flip-flop is connected to the D input of the following
+flip-flop.
+
+All stages share a common clock.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{Shift register}
+=
+\text{register that moves stored bits}
+}
+\]
+
+\[
+\text{Serial In}
+\rightarrow
+A_0
+\rightarrow
+A_1
+\rightarrow
+A_2
+\rightarrow
+A_3
+\rightarrow
+\text{Serial Out}
+\]
+
+\[
+\boxed{
+1\text{ clock transition}
+\Rightarrow
+1\text{ shift}
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{4-Bit Shift Register}
+% ------------------------------------------------------------
+
+In the simple 4-bit shift register, the serial input enters the leftmost
+flip-flop and each stored bit moves one position toward the serial output on
+the active clock transition.
+
+\begin{whiteboard}
+
+\corresponds{2-8}
+
+\begin{center}
+\includegraphics[
+    width=0.90\textwidth
+]{7_fig_2_8.png}
+\end{center}
+
+\[
+\boxed{
+\text{Serial In}
+\rightarrow
+A_0
+\rightarrow
+A_1
+\rightarrow
+A_2
+\rightarrow
+A_3
+\rightarrow
+\text{Serial Out}
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Serial and Parallel Transfer}
+% ------------------------------------------------------------
+
+Parallel transfer moves multiple bits simultaneously over multiple data lines.
+
+Serial transfer moves one bit at a time over a single data line.
+
+Shift registers can therefore provide conversion between serial and parallel
+representations.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{Parallel transfer: }n\text{ bits at once on }n\text{ lines}
+}
+\]
+
+\[
+\boxed{
+\text{Serial transfer: }1\text{ bit at a time on }1\text{ line}
+}
+\]
+
+Transmitter:
+
+\[
+\boxed{
+\text{parallel}
+\rightarrow
+\text{serial}
+}
+\]
+
+Receiver:
+
+\[
+\boxed{
+\text{serial}
+\rightarrow
+\text{parallel}
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Bidirectional Shift Register with Parallel Load}
+% ------------------------------------------------------------
+
+A more general shift register can:
+
+\begin{itemize}
+    \item hold its present contents,
+    \item shift right,
+    \item shift left,
+    \item load data in parallel.
+\end{itemize}
+
+Mano's 4-bit design uses one 4-to-1 multiplexer for each D flip-flop.
+
+The selection lines \(S_1\) and \(S_0\) choose which data source reaches each
+flip-flop input.
+
+\begin{whiteboard}
+
+\corresponds{2-9}
+
+\begin{center}
+\includegraphics[
+    height=0.63\textheight,
+    keepaspectratio
+]{8_fig_2_9.png}
+\end{center}
+
+\[
+\begin{array}{cc|l}
+S_1&S_0&\text{Register Operation}\\
+\hline
+0&0&\text{No change}\\
+0&1&\text{Shift right}\\
+1&0&\text{Shift left}\\
+1&1&\text{Parallel load}
+\end{array}
+\]
+
+\end{whiteboard}
+
+The four multiplexer selections have a direct interpretation:
+
+\[
+00
+\Rightarrow
+\text{feedback},
+\]
+
+\[
+01
+\Rightarrow
+\text{shift-right source},
+\]
+
+\[
+10
+\Rightarrow
+\text{shift-left source},
+\]
+
+\[
+11
+\Rightarrow
+\text{parallel input}.
+\]
+
+\begin{whiteboard}
+
+\[
+\boxed{
+00\Rightarrow\text{hold}
+}
+\]
+
+\[
+\boxed{
+01\Rightarrow\text{shift right}
+}
+\]
+
+\[
+\boxed{
+10\Rightarrow\text{shift left}
+}
+\]
+
+\[
+\boxed{
+11\Rightarrow\text{parallel load}
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Binary Counters}
+% ============================================================
+
+A counter is a register that passes through a predetermined sequence of states
+when input pulses are applied.
+
+A binary counter follows the ordinary binary number sequence.
+
+An \(n\)-bit binary counter contains \(n\) flip-flops and counts from
+
+\[
+0
+\]
+
+through
+
+\[
+2^n-1.
+\]
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{Counter}
+=
+\text{register that follows a state sequence}
+}
+\]
+
+\[
+\boxed{
+n\text{-bit binary counter: }
+0\rightarrow2^n-1
+}
+\]
+
+Example:
+
+\[
+0000
+\rightarrow
+0001
+\rightarrow
+0010
+\rightarrow
+0011
+\rightarrow
+0100
+\rightarrow
+\cdots
+\]
+
+\end{whiteboard}
+
+Inspection of the binary counting sequence gives a regular toggle pattern.
+
+The least significant bit changes after every count.
+
+Each higher-order bit changes only when all lower-order bits are 1.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+A_0\text{ toggles every count}
+}
+\]
+
+\[
+\boxed{
+A_i\text{ toggles iff all lower-order bits are }1
+}
+\]
+
+Example:
+
+\[
+0111
+\rightarrow
+1000
+\]
+
+All four bits change because:
+
+\[
+A_0=1,
+\qquad
+A_1A_0=11,
+\qquad
+A_2A_1A_0=111.
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{4-Bit Synchronous Binary Counter}
+% ------------------------------------------------------------
+
+JK flip-flops are convenient for binary counters because they toggle when
+
+\[
+J=K=1.
+\]
+
+In a synchronous counter, every flip-flop receives the same clock.
+
+Combinational logic determines which stages are permitted to toggle on each
+clock transition.
+
+\begin{whiteboard}
+
+\corresponds{2-10}
+
+\begin{center}
+\includegraphics[
+    height=0.62\textheight,
+    keepaspectratio
+]{9_fig_2_10.png}
+\end{center}
+
+\[
+\text{Enable}=0
+\Rightarrow
+\boxed{\text{hold}}
+\]
+
+\[
+\text{Enable}=1
+\Rightarrow
+\boxed{\text{count}}
+\]
+
+\[
+A_0:
+\quad
+J_0=K_0=\text{Enable}
+\]
+
+Higher stages toggle when:
+
+\[
+\boxed{
+\text{Enable}=1
+\text{ and all lower-order bits}=1
+}
+\]
+
+\end{whiteboard}
+
+The output carry is generated when all stages reach the condition required to
+advance an additional counter stage.
+
+It can therefore be used to expand the counter.
+
+% ------------------------------------------------------------
+\subsection{Binary Counter with Parallel Load}
+% ------------------------------------------------------------
+
+Counters used in digital systems often require more operations than simple
+counting.
+
+Mano's counter with parallel load provides:
+
+\begin{itemize}
+    \item no change,
+    \item increment,
+    \item parallel load,
+    \item synchronous clear.
+\end{itemize}
+
+\begin{whiteboard}
+
+\corresponds{2-11}
+
+\begin{center}
+\includegraphics[
+    height=0.64\textheight,
+    keepaspectratio
+]{10_fig_2_11.png}
+\end{center}
+
+\[
+\begin{array}{ccc|l}
+\text{Clear}
+&
+\text{Load}
+&
+\text{Increment}
+&
+\text{Operation}
+\\
+\hline
+0&0&0&\text{No change}\\
+0&0&1&\text{Increment by 1}\\
+0&1&X&\text{Load }I_0\text{--}I_3\\
+1&X&X&\text{Clear to 0}
+\end{array}
+\]
+
+\end{whiteboard}
+
+The increment operation adds one to the binary number stored in the register.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{Increment}
+=
+\text{register contents}+1
+}
+\]
+
+Priority:
+
+\[
+\boxed{
+\text{Clear}
+>
+\text{Load}
+>
+\text{Increment}
+>
+\text{Hold}
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Memory Unit}
+% ============================================================
+
+A memory unit is a collection of storage cells together with the circuitry
+required to transfer information into and out of storage.
+
+Binary information is stored in groups called \emph{words}.
+
+A word is transferred as one unit.
+
+A group of eight bits is called a \emph{byte}.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{word}
+=
+\text{group of bits stored/transferred as one unit}
+}
+\]
+
+\[
+\boxed{
+1\text{ byte}=8\text{ bits}
+}
+\]
+
+Examples:
+
+\[
+16\text{-bit word}=2\text{ bytes}
+\]
+
+\[
+32\text{-bit word}=4\text{ bytes}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Memory Addressing}
+% ------------------------------------------------------------
+
+Each word in memory has a unique address.
+
+If a memory contains
+
+\[
+2^k
+\]
+
+words, then
+
+\[
+k
+\]
+
+address lines are required to select one word.
+
+If each word contains \(n\) bits, the memory organization can be written as
+
+\[
+2^k\times n.
+\]
+
+\begin{whiteboard}
+
+\[
+\boxed{
+2^k\text{ words}
+\Rightarrow
+k\text{ address lines}
+}
+\]
+
+\[
+\boxed{
+\text{memory organization}
+=
+2^k\text{ words}\times n\text{ bits/word}
+}
+\]
+
+Address range:
+
+\[
+0
+\rightarrow
+2^k-1
+\]
+
+\end{whiteboard}
+
+Memory sizes are commonly expressed using powers of two:
+
+\[
+K=2^{10},
+\]
+
+\[
+M=2^{20},
+\]
+
+\[
+G=2^{30}.
+\]
+
+\begin{whiteboard}
+
+\[
+\boxed{
+K=2^{10}
+}
+\qquad
+\boxed{
+M=2^{20}
+}
+\qquad
+\boxed{
+G=2^{30}
+}
+\]
+
+Examples:
+
+\[
+64K=2^{16}
+\]
+
+\[
+2M=2^{21}
+\]
+
+\[
+4G=2^{32}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Random-Access Memory}
+% ============================================================
+
+Random-access memory, or RAM, permits information to be transferred to or
+from any selected memory word.
+
+The word is selected by its binary address.
+
+A RAM unit therefore contains:
+
+\begin{itemize}
+    \item address lines,
+    \item data input lines,
+    \item data output lines,
+    \item read and write control lines.
+\end{itemize}
+
+\begin{whiteboard}
+
+\corresponds{2-12}
+
+\begin{center}
+\includegraphics[
+    width=0.62\textwidth
+]{11_fig_2_12.png}
+\end{center}
+
+\[
+\boxed{
+2^k\text{ words}
+\times
+n\text{ bits/word}
+}
+\]
+
+\[
+k\text{ address lines}
+\]
+
+\[
+n\text{ data input lines}
+\]
+
+\[
+n\text{ data output lines}
+\]
+
+\[
+\text{Read},
+\qquad
+\text{Write}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Write Operation}
+% ------------------------------------------------------------
+
+To store a new word in RAM:
+
+\begin{enumerate}
+    \item Apply the desired binary address.
+    \item Apply the data to the input lines.
+    \item Activate the Write control.
+\end{enumerate}
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{RAM Write}}
+\]
+
+\[
+1.\ \text{Address}
+\]
+
+\[
+2.\ \text{Data In}
+\]
+
+\[
+3.\ \text{Write}
+\]
+
+\[
+\boxed{
+\text{selected word}
+\leftarrow
+\text{input data}
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Read Operation}
+% ------------------------------------------------------------
+
+To read a stored word:
+
+\begin{enumerate}
+    \item Apply the desired binary address.
+    \item Activate the Read control.
+\end{enumerate}
+
+The selected memory word is then placed on the output data lines.
+
+Reading does not alter the stored word.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{RAM Read}}
+\]
+
+\[
+1.\ \text{Address}
+\]
+
+\[
+2.\ \text{Read}
+\]
+
+\[
+3.\ \text{Data Out}
+\]
+
+\[
+\boxed{
+\text{Read does not change stored data}
+}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Read-Only Memory}
+% ============================================================
+
+Read-only memory, or ROM, contains permanently established binary information.
+
+A ROM has address inputs and data outputs but does not provide the normal
+write capability of RAM.
+
+An \(m\times n\) ROM contains
+
+\[
+m
+\]
+
+words of
+
+\[
+n
+\]
+
+bits each.
+
+If
+
+\[
+m=2^k,
+\]
+
+then \(k\) address lines are needed.
+
+\begin{whiteboard}
+
+\corresponds{2-13}
+
+\begin{center}
+\includegraphics[
+    width=0.56\textwidth
+]{12_fig_2_13.png}
+\end{center}
+
+\[
+m=2^k
+\]
+
+\[
+\boxed{
+k\text{ address inputs}
+\rightarrow
+m\text{ stored words}
+}
+\]
+
+\[
+\boxed{
+n\text{ output lines}
+}
+\]
+
+\end{whiteboard}
+
+A ROM output depends only on its current address inputs.
+
+For this reason, Mano classifies ROM as a combinational circuit.
+
+A ROM can implement an input-output relationship specified by a truth table.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{ROM output}
+=
+f(\text{address inputs})
+}
+\]
+
+Therefore:
+
+\[
+\boxed{
+\text{ROM is a combinational circuit}
+}
+\]
+
+\[
+\boxed{
+\text{ROM can implement a truth table}
+}
+\]
+
+Internal idea:
+
+\[
+\boxed{
+\text{decoder}
++
+\text{OR circuitry}
+}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Types of ROM}
+% ------------------------------------------------------------
+
+Mano describes several ways in which ROM information may be established.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{Types of ROM}}
+\]
+
+\[
+\begin{array}{c|l}
+\text{ROM}
+&
+\text{fixed during manufacture}
+\\
+\text{PROM}
+&
+\text{user-programmable once}
+\\
+\text{EPROM}
+&
+\text{erasable and reprogrammable}
+\\
+\text{EEPROM}
+&
+\text{electrically erasable}
+\end{array}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Chapter Summary}
+% ============================================================
+
+Chapter 2 moves from individual logic gates to reusable digital components.
+
+Decoders and encoders convert between binary codes and one-of-many
+representations.
+
+Multiplexers select one data source.
+
+Registers store binary words.
+
+Shift registers move stored information.
+
+Counters advance through ordered binary states.
+
+Memory units provide large collections of individually addressable words.
+
+\begin{whiteboard}
+
+\[
+\boxed{
+\text{gates}
+\rightarrow
+\text{digital components}
+}
+\]
+
+\[
+\boxed{
+\text{decoder}
+\rightarrow
+\text{select one output}
+}
+\]
+
+\[
+\boxed{
+\text{encoder}
+\rightarrow
+\text{encode one active input}
+}
+\]
+
+\[
+\boxed{
+\text{MUX}
+\rightarrow
+\text{select one data input}
+}
+\]
+
+\[
+\boxed{
+\text{register}
+\rightarrow
+\text{store bits}
+}
+\]
+
+\[
+\boxed{
+\text{shift register}
+\rightarrow
+\text{move bits}
+}
+\]
+
+\[
+\boxed{
+\text{counter}
+\rightarrow
+\text{sequence through states}
+}
+\]
+
+\[
+\boxed{
+\text{memory}
+\rightarrow
+\text{store addressed words}
+}
+\]
+
+\end{whiteboard}
+
+\end{document}
