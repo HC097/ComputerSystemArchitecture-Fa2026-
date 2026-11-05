@@ -1,0 +1,1632 @@
+\documentclass[11pt]{article}
+
+% ============================================================
+% Packages
+% ============================================================
+\usepackage[margin=0.82in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{graphicx}
+
+% ============================================================
+% General Formatting
+% ============================================================
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.62em}
+\setlist[itemize]{leftmargin=1.5em}
+\setlist[enumerate]{leftmargin=1.75em}
+\renewcommand{\arraystretch}{1.15}
+\raggedbottom
+\graphicspath{{./}}
+
+% ============================================================
+% Whiteboard and Problem Helpers
+% ============================================================
+\newenvironment{whiteboard}
+{
+    \par\medskip
+    \hrule
+    \vspace{0.35em}
+    \noindent\textbf{\large WHITEBOARD}
+    \par\vspace{0.3em}
+    \hrule
+    \vspace{0.65em}
+}
+{
+    \vspace{0.45em}
+    \hrule
+    \par\medskip
+}
+
+\newcommand{\corresponds}[1]{%
+    \textit{Corresponds to Mano, Fig.~#1.}\par\smallskip
+}
+
+\newcommand{\correspondstable}[1]{%
+    \textit{Corresponds to Mano, Table~#1.}\par\smallskip
+}
+
+\newcommand{\Q}{\par\noindent\textbf{Q:}\ }
+\newcommand{\A}{\par\noindent\textbf{A:}\ }
+
+\newcommand{\worked}[1]{%
+    \subsection*{Worked Example --- #1}
+}
+
+% ============================================================
+% Document
+% ============================================================
+\begin{document}
+
+\begin{center}
+    {\LARGE\textbf{CS2614 --- Computer System Architecture}}\\[0.45em]
+    {\Large\textbf{Chapter 4: Register Transfer and Microoperations}}\\[0.25em]
+    {\large\textbf{Integrated Lecture Notes and Worked Problems}}\\[0.45em]
+    \textit{Based on M. Morris Mano, Computer System Architecture, 3rd ed.}
+\end{center}
+
+% ============================================================
+\section{Register Transfer Language}
+% ============================================================
+
+A digital computer is organized from interconnected hardware modules such as registers, decoders, arithmetic elements, and control logic. The operations performed on information stored in registers are called \emph{microoperations}.
+
+A microoperation is an elementary operation performed on the information stored in one or more registers. The result may replace the previous contents of a register or may be transferred to another register.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{microoperation}=\text{elementary operation on register data}}
+\]
+
+Examples:
+
+\[
+\boxed{\text{transfer, load, clear, increment, shift}}
+\]
+
+A computer's internal organization is described by:
+
+\[
+\boxed{1.\ \text{registers and their functions}}
+\]
+
+\[
+\boxed{2.\ \text{microoperations performed}}
+\]
+
+\[
+\boxed{3.\ \text{control that initiates them}}
+\]
+
+\end{whiteboard}
+
+Instead of describing each internal operation in prose, Mano uses a symbolic notation called \emph{register transfer language} (RTL). RTL specifies register transfers, microoperations, and the control functions that initiate them.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{RTL}=\text{Register Transfer Language}}
+\]
+
+\[
+\boxed{\text{symbolic description of internal computer operations}}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Register Transfer}
+% ============================================================
+
+Registers are designated by capital letters or functional abbreviations such as
+
+\[
+R1,\quad R2,\quad AR,\quad PC,\quad IR.
+\]
+
+For an $n$-bit register, bit positions are numbered from $0$ at the right through $n-1$ at the left. A portion of a register may be identified explicitly.
+
+\begin{whiteboard}
+
+\[
+R(n-1),\ldots,R(1),R(0)
+\]
+
+For a 16-bit register:
+
+\[
+\boxed{PC(L)=PC(0\text{--}7)}
+\]
+
+\[
+\boxed{PC(H)=PC(8\text{--}15)}
+\]
+
+\end{whiteboard}
+
+The basic register-transfer statement
+
+\[
+R2\leftarrow R1
+\]
+
+means that the contents of $R1$ are copied into $R2$. The previous contents of $R2$ are replaced, while $R1$ is unchanged.
+
+\begin{whiteboard}
+
+\[
+\boxed{R2\leftarrow R1}
+\]
+
+\[
+\boxed{R2\text{ receives the contents of }R1}
+\]
+
+\[
+\boxed{R1\text{ is unchanged}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Control Functions and Clocked Transfers}
+% ------------------------------------------------------------
+
+A register transfer normally occurs only when a control condition is active. If the control variable is $P$, the statement
+
+\[
+P:\quad R2\leftarrow R1
+\]
+
+means that the transfer occurs when $P=1$. The actual loading of the destination register occurs at the active clock transition.
+
+\begin{whiteboard}
+
+\[
+\boxed{P:\quad R2\leftarrow R1}
+\]
+
+\[
+P=1\Rightarrow\text{transfer enabled}
+\]
+
+\[
+\boxed{\text{transfer occurs at the active clock edge}}
+\]
+
+\corresponds{4-2}
+
+\begin{center}
+\includegraphics[height=0.54\textheight,keepaspectratio]{fig4_2.png}
+\end{center}
+
+\end{whiteboard}
+
+A comma in RTL denotes simultaneous microoperations, provided the hardware can perform them during the same clock transition.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{comma}=\text{simultaneous microoperations}}
+\]
+
+Example:
+
+\[
+R2\leftarrow R1,\qquad R1\leftarrow R2
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Textbook Problem 4-1: Simultaneous Register Exchange}
+% ------------------------------------------------------------
+
+\Q Show the block diagram of the hardware that implements
+
+\[
+yT_2:\qquad R_2\leftarrow R_1,\qquad R_1\leftarrow R_2.
+\]
+
+\A The comma means that both transfers occur on the same clock transition. The two registers are cross-connected, and the control function $yT_2$ enables both destination load inputs. Because the registers are edge-triggered, each samples the old value of the other at the edge, so no temporary register is required.
+
+\begin{whiteboard}
+
+\[
+P=yT_2
+\]
+
+\[
+\boxed{R_1^{out}\rightarrow R_2^{in}}
+\qquad
+\boxed{R_2^{out}\rightarrow R_1^{in}}
+\]
+
+\[
+\boxed{LD(R_1)=LD(R_2)=yT_2}
+\]
+
+At the active edge:
+
+\[
+\boxed{R_1^+=R_2,\qquad R_2^+=R_1}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Register Problem 14: Same Exchange with Control $C_3$}
+% ------------------------------------------------------------
+
+\Q Implement
+
+\[
+C_3:\qquad R_2\leftarrow R_1,\qquad R_1\leftarrow R_2.
+\]
+
+\A This is the same simultaneous-exchange structure as Problem 4-1, with $C_3$ replacing $yT_2$.
+
+\begin{whiteboard}
+
+\[
+\boxed{LD(R_1)=LD(R_2)=C_3}
+\]
+
+\[
+\begin{array}{c|cc}
+C_3&R_1^+&R_2^+\\
+\hline
+0&R_1&R_2\\
+1&R_2&R_1
+\end{array}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Textbook Problem 4-23: Illegal Simultaneous Assignments}
+% ------------------------------------------------------------
+
+\Q What is wrong with the following RTL statements?
+
+\[
+\text{(a) }xT:\quad AR\leftarrow\overline{AR},\qquad AR\leftarrow0
+\]
+
+\[
+\text{(b) }yT:\quad R_1\leftarrow R_2,\qquad R_1\leftarrow R_3
+\]
+
+\[
+\text{(c) }zT:\quad PC\leftarrow AR,\qquad PC\leftarrow PC+1
+\]
+
+\A Each line tries to assign two different next values to the same destination register during one clock transition. A single register cannot load two different values at the same edge. The operations must be separated in time or made mutually exclusive.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{One destination register cannot receive two next values at one edge.}}
+\]
+
+\[
+\text{(a) }AR:\ \overline{AR}\ \text{or }0\quad\text{-- not both}
+\]
+
+\[
+\text{(b) }R_1:\ R_2\ \text{or }R_3\quad\text{-- not both}
+\]
+
+\[
+\text{(c) }PC:\ AR\ \text{or }PC+1\quad\text{-- not both}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Bus and Memory Transfers}
+% ============================================================
+
+If every register were directly wired to every other register, the interconnection network would become excessive. A common bus provides a shared data path among registers.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{common bus}=\text{shared data path among registers}}
+\]
+
+For $n$-bit registers:
+
+\[
+\boxed{\text{bus width}=n\text{ lines}}
+\]
+
+\[
+\boxed{\text{select source}\rightarrow\text{bus}\rightarrow\text{load destination}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Multiplexer Bus}
+% ------------------------------------------------------------
+
+Mano's four-register bus uses four 4-to-1 multiplexers, one for each bit position. The same selection inputs choose the source register for all bus bits.
+
+\begin{whiteboard}
+
+\corresponds{4-3}
+
+\begin{center}
+\includegraphics[width=0.95\textwidth]{fig4_3.png}
+\end{center}
+
+\[
+\begin{array}{cc|c}
+S_1&S_0&\text{Register on bus}\\
+\hline
+0&0&A\\
+0&1&B\\
+1&0&C\\
+1&1&D
+\end{array}
+\]
+
+\end{whiteboard}
+
+For $k$ registers of $n$ bits each, the bus requires $n$ multiplexers, each of size $k$-to-1.
+
+\begin{whiteboard}
+
+\[
+\boxed{k\text{ registers}\times n\text{ bits}}
+\]
+
+requires
+
+\[
+\boxed{n\text{ multiplexers, each }k\text{-to-}1}
+\]
+
+Example:
+
+\[
+8\text{ registers}\times16\text{ bits}
+\Rightarrow
+\boxed{16\text{ eight-to-one MUXes}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Textbook Problem 4-4: Completing the Bus for Register-to-Register Transfer}
+% ------------------------------------------------------------
+
+\Q What must be added to the bus system of Fig. 4-3 to transfer information from any register to any other register? In particular, provide a path from register $C$ to register $A$.
+
+\A Fig. 4-3 already selects the source register. To complete a general transfer system, the common bus must also connect to the parallel inputs of every destination register, and every register needs its own load control. To perform $A\leftarrow C$, select $C$ onto the bus and enable $A$'s load input.
+
+\begin{whiteboard}
+
+\[
+\boxed{BUS\rightarrow A,B,C,D}
+\]
+
+For
+
+\[
+A\leftarrow C:
+\]
+
+\[
+\boxed{S_1S_0=10}
+\qquad
+\boxed{LD(A)=1}
+\]
+
+\[
+BUS\leftarrow C,
+\qquad
+A\leftarrow BUS=C
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Three-State Bus Buffers}
+% ------------------------------------------------------------
+
+A common bus can also be constructed with three-state buffers. A three-state output can assume logic 0, logic 1, or the high-impedance state $Z$. High impedance behaves like an open circuit, allowing multiple outputs to share one physical bus line safely.
+
+\begin{whiteboard}
+
+\corresponds{4-4}
+
+\begin{center}
+\includegraphics[width=0.72\textwidth]{fig4_4.png}
+\end{center}
+
+\[
+\boxed{0,\quad1,\quad Z}
+\]
+
+\[
+\boxed{Z=\text{high impedance}\approx\text{open circuit}}
+\]
+
+\[
+C=1\Rightarrow Y=A,
+\qquad
+C=0\Rightarrow Y=Z
+\]
+
+\end{whiteboard}
+
+A decoder can ensure that exactly one register's buffers are enabled at a time.
+
+\begin{whiteboard}
+
+\corresponds{4-5}
+
+\begin{center}
+\includegraphics[width=0.66\textwidth]{fig4_5.png}
+\end{center}
+
+\[
+\boxed{\text{Only one source may drive the bus at one time.}}
+\]
+
+All other outputs:
+
+\[
+\boxed{Z}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Textbook Problem 4-5: Building the Bus with Three-State Buffers}
+% ------------------------------------------------------------
+
+\Q Draw a bus system similar to Fig. 4-3 using three-state buffers and a decoder instead of multiplexers.
+
+\A For each bit position, provide one three-state buffer for each register. A 2-to-4 decoder enables exactly one register's buffer set. The same structure is repeated for all four bit positions.
+
+\begin{whiteboard}
+
+\[
+\begin{array}{cc|c}
+S_1&S_0&\text{Enabled register}\\
+\hline
+0&0&A\\
+0&1&B\\
+1&0&C\\
+1&1&D
+\end{array}
+\]
+
+For each bit $i$:
+
+\[
+A_i,B_i,C_i,D_i
+\rightarrow
+\text{four three-state buffers}
+\rightarrow
+BUS_i
+\]
+
+For four 4-bit registers:
+
+\[
+\boxed{4\times4=16\text{ three-state buffers}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Memory Transfers}
+% ------------------------------------------------------------
+
+Let $AR$ be the address register and $DR$ the data register. A memory read is written
+
+\[
+DR\leftarrow M[AR],
+\]
+
+and a memory write is written
+
+\[
+M[AR]\leftarrow R1.
+\]
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{Read: }DR\leftarrow M[AR]}
+\]
+
+\[
+\boxed{\text{Write: }M[AR]\leftarrow R1}
+\]
+
+\[
+M[AR]=\text{memory word selected by the address in }AR
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Arithmetic Microoperations}
+% ============================================================
+
+The microoperations most often encountered in digital computers fall into four classes.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{Microoperations}}
+\]
+
+\[
+\begin{array}{c|l}
+1.&\text{Register transfer}\\
+2.&\text{Arithmetic}\\
+3.&\text{Logic}\\
+4.&\text{Shift}
+\end{array}
+\]
+
+\[
+\boxed{\text{register transfer: information unchanged}}
+\]
+
+\[
+\boxed{\text{arithmetic/logic/shift: information transformed}}
+\]
+
+\end{whiteboard}
+
+Basic arithmetic microoperations include add, subtract, complement, increment, and decrement.
+
+\begin{whiteboard}
+
+\[
+\begin{array}{l|l}
+R3\leftarrow R1+R2&\text{Add}\\
+R3\leftarrow R1-R2&\text{Subtract}\\
+R2\leftarrow\overline{R2}&\text{1's complement}\\
+R2\leftarrow\overline{R2}+1&\text{2's complement}\\
+R1\leftarrow R1+1&\text{Increment}\\
+R1\leftarrow R1-1&\text{Decrement}
+\end{array}
+\]
+
+Subtraction:
+
+\[
+\boxed{A-B=A+\overline B+1}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Binary Adder}
+% ------------------------------------------------------------
+
+An $n$-bit binary adder is constructed by cascading $n$ full-adders. The carry output of each stage feeds the carry input of the next higher-order stage.
+
+\begin{whiteboard}
+
+\corresponds{4-6}
+
+\begin{center}
+\includegraphics[width=0.88\textwidth]{fig4_6.png}
+\end{center}
+
+\[
+\boxed{n\text{-bit adder}=n\text{ full-adders}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Textbook Problem 4-8: Control Logic Plus Arithmetic Addition}
+% ------------------------------------------------------------
+
+\Q Implement
+
+\[
+x+yz:\qquad AR\leftarrow AR+BR,
+\]
+
+where $AR$ and $BR$ are $n$-bit registers and $x,y,z$ are control variables.
+
+\A The plus sign has two different meanings. In the control expression $x+yz$, it means Boolean OR. In the microoperation $AR+BR$, it means arithmetic addition. The adder continuously forms $AR+BR$, while the control function determines whether $AR$ loads the result.
+
+\begin{whiteboard}
+
+\[
+\boxed{P=x+yz}
+\]
+
+\[
+G=yz,
+\qquad
+P=x+G
+\]
+
+\[
+\boxed{SUM=AR+BR}
+\]
+
+\[
+\boxed{LD(AR)=x+yz}
+\]
+
+\begin{center}
+\includegraphics[width=0.70\textwidth]{sol4_8.png}
+\end{center}
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Adder-Subtractor}
+% ------------------------------------------------------------
+
+Addition and subtraction can be performed by the same hardware. A mode input $M$ controls XOR gates on the $B$ operand and also supplies the least-significant input carry.
+
+\begin{whiteboard}
+
+\corresponds{4-7}
+
+\begin{center}
+\includegraphics[width=0.90\textwidth]{fig4_7.png}
+\end{center}
+
+If $M=0$:
+
+\[
+B\oplus0=B,
+\qquad
+C_0=0
+\]
+
+\[
+\boxed{S=A+B}
+\]
+
+If $M=1$:
+
+\[
+B\oplus1=\overline B,
+\qquad
+C_0=1
+\]
+
+\[
+S=A+\overline B+1
+\]
+
+\[
+\boxed{S=A-B}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Increment}
+% ------------------------------------------------------------
+
+An increment microoperation adds one to a register.
+
+\begin{whiteboard}
+
+\[
+\boxed{A\leftarrow A+1}
+\]
+
+Examples:
+
+\[
+0110+1=0111
+\]
+
+\[
+1111+1=0000,
+\qquad C_{out}=1
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Textbook Problem 4-11: Use the Counter's Built-In Incrementer}
+% ------------------------------------------------------------
+
+\Q Using a 4-bit counter with parallel load and a 4-bit adder, implement
+
+\[
+x:\quad R_1\leftarrow R_1+R_2
+\]
+
+and
+
+\[
+x'y:\quad R_1\leftarrow R_1+1,
+\]
+
+where $R_1$ is the counter and $R_2$ is a 4-bit register.
+
+\A Use the external adder only for $R_1+R_2$. Its output feeds the parallel-load inputs of the counter, and $x$ drives Load. The counter already has increment hardware, so $x'y$ drives Increment directly.
+
+\begin{whiteboard}
+
+\begin{center}
+\includegraphics[width=0.47\textwidth]{fig2_11.png}\hfill
+\includegraphics[width=0.47\textwidth]{fig4_6.png}
+\end{center}
+
+\[
+\boxed{SUM=R_1+R_2}
+\]
+
+\[
+\boxed{LD=x}
+\qquad
+\boxed{INC=x'y}
+\qquad
+\boxed{CLR=0}
+\]
+
+\[
+\begin{array}{cc|cc|c}
+x&y&LD&INC&\text{Operation}\\
+\hline
+0&0&0&0&\text{No change}\\
+0&1&0&1&R_1\leftarrow R_1+1\\
+1&0&1&0&R_1\leftarrow R_1+R_2\\
+1&1&1&0&R_1\leftarrow R_1+R_2
+\end{array}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Register Problem 13: Dedicated Counter Hardware vs. One General Adder}
+% ------------------------------------------------------------
+
+\Q Implement
+
+\[
+C_1:\quad R_1\leftarrow R_1+R_2
+\]
+
+and
+
+\[
+C_1'C_2:\quad R_1\leftarrow R_1+1
+\]
+
+first using a counter with parallel load and then using a 4-bit adder plus external gates.
+
+\A Part (a) follows the same idea as Problem 4-11: exploit the counter's built-in increment operation. Part (b) deliberately uses one adder for both arithmetic operations by controlling the second operand, input carry, and load signal.
+
+\begin{whiteboard}
+
+Part (a):
+
+\[
+\boxed{SUM=R_1+R_2}
+\]
+
+\[
+\boxed{LD=C_1}
+\qquad
+\boxed{INC=C_1'C_2}
+\qquad
+\boxed{CLR=0}
+\]
+
+Part (b):
+
+\[
+\boxed{Y_i=C_1R_{2i}},\qquad i=0,1,2,3
+\]
+
+\[
+\boxed{C_{in}=C_1'}
+\]
+
+\[
+\boxed{LD=C_1+C_2}
+\]
+
+\[
+\boxed{D=R_1+Y+C_{in}}
+\]
+
+\[
+\begin{array}{cc|c|c|c|c}
+C_1&C_2&Y&C_{in}&LD&\text{Operation}\\
+\hline
+0&0&0000&1&0&\text{No change}\\
+0&1&0000&1&1&R_1\leftarrow R_1+1\\
+1&0&R_2&0&1&R_1\leftarrow R_1+R_2\\
+1&1&R_2&0&1&R_1\leftarrow R_1+R_2
+\end{array}
+\]
+
+\[
+\boxed{\text{Counter design uses dedicated increment hardware.}}
+\]
+
+\[
+\boxed{\text{Adder-only design uses one general arithmetic path.}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Composite Arithmetic Circuit}
+% ------------------------------------------------------------
+
+Mano combines a parallel adder with multiplexers so that the second adder operand $Y$ can be selected from $B$, $\overline B$, 0, or 1. The result is
+
+\[
+D=A+Y+C_{in}.
+\]
+
+\begin{whiteboard}
+
+\corresponds{4-9}
+
+\begin{center}
+\includegraphics[height=0.58\textheight,keepaspectratio]{fig4_9.png}
+\end{center}
+
+\[
+\boxed{D=A+Y+C_{in}}
+\]
+
+\[
+\begin{array}{cc|c}
+S_1&S_0&Y\\
+\hline
+0&0&B\\
+0&1&\overline B\\
+1&0&0\\
+1&1&1
+\end{array}
+\]
+
+\end{whiteboard}
+
+The eight control combinations produce seven distinct arithmetic microoperations.
+
+\begin{whiteboard}
+
+\[
+\begin{array}{ccc|l}
+S_1&S_0&C_{in}&\text{Result}\\
+\hline
+0&0&0&A+B\\
+0&0&1&A+B+1\\
+0&1&0&A-B-1\\
+0&1&1&A-B\\
+1&0&0&A\\
+1&0&1&A+1\\
+1&1&0&A-1\\
+1&1&1&A
+\end{array}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Textbook Problem 4-14: Cascade Two 4-Bit Arithmetic Slices}
+% ------------------------------------------------------------
+
+\Q Assume the 4-bit arithmetic circuit of Fig. 4-9 is one IC package. Connect two such packages to form an 8-bit arithmetic circuit.
+
+\A One package handles bits 3:0 and the other handles bits 7:4. Both receive the same function-selection inputs. The low-order carry-out becomes the high-order carry-in.
+
+\begin{whiteboard}
+
+\[
+IC_L:\quad A_3:A_0,\ B_3:B_0\rightarrow D_3:D_0
+\]
+
+\[
+IC_H:\quad A_7:A_4,\ B_7:B_4\rightarrow D_7:D_4
+\]
+
+\[
+\boxed{S_1,S_0\text{ common to both ICs}}
+\]
+
+\[
+\boxed{C_{in}\rightarrow IC_L}
+\]
+
+\[
+\boxed{C_4=C_{out}(IC_L)\rightarrow C_{in}(IC_H)}
+\]
+
+\[
+\boxed{C_8=C_{out}(IC_H)}
+\]
+
+\begin{center}
+\includegraphics[width=0.62\textwidth]{sol4_14.png}
+\end{center}
+
+\end{whiteboard}
+
+% ============================================================
+\section{Logic Microoperations}
+% ============================================================
+
+Logic microoperations perform bit-by-bit operations on register contents.
+
+For example, if
+
+\[
+R1=1010,
+\qquad
+R2=1100,
+\]
+
+then
+
+\[
+R1\leftarrow R1\oplus R2
+\]
+
+produces
+
+\[
+0110.
+\]
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{logic microoperations act bit-by-bit}}
+\]
+
+\[
+\begin{array}{r}
+1010\\
+\oplus\ 1100\\
+\hline
+0110
+\end{array}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Arithmetic Plus vs. Boolean OR}
+% ------------------------------------------------------------
+
+The symbol $+$ has different meanings depending on context. In a Boolean control function it denotes OR; inside an arithmetic register microoperation it denotes addition. For register logic OR, Mano uses $\vee$.
+
+\begin{whiteboard}
+
+\[
+P+Q:\quad R1\leftarrow R2+R3
+\]
+
+Here:
+
+\[
+\boxed{P+Q=\text{Boolean OR}}
+\]
+
+\[
+\boxed{R2+R3=\text{arithmetic addition}}
+\]
+
+For register logic OR:
+
+\[
+\boxed{R4\leftarrow R5\vee R6}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Sixteen Two-Variable Logic Functions}
+% ------------------------------------------------------------
+
+Two binary variables define
+
+\[
+2^{2^2}=16
+\]
+
+possible Boolean functions. Computers commonly provide a smaller useful set such as AND, OR, XOR, and complement.
+
+\begin{whiteboard}
+
+\[
+\boxed{2^{2^2}=16\text{ possible two-variable logic functions}}
+\]
+
+Common basic set:
+
+\[
+\boxed{AND,\quad OR,\quad XOR,\quad complement}
+\]
+
+\corresponds{4-10}
+
+\begin{center}
+\includegraphics[width=0.80\textwidth]{fig4_10.png}
+\end{center}
+
+\[
+\begin{array}{cc|c}
+S_1&S_0&\text{Operation}\\
+\hline
+0&0&AND\\
+0&1&OR\\
+1&0&XOR\\
+1&1&\text{Complement }A
+\end{array}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Textbook Problem 4-16: Generate Any of the 16 Logic Functions}
+% ------------------------------------------------------------
+
+\Q Derive a combinational circuit that selects and generates any of the 16 logic functions listed in Table 4-5.
+
+\A A two-variable Boolean function is determined by the four outputs corresponding to input combinations $00,01,10,11$. Treat those four truth-table values as the data inputs of a 4-to-1 multiplexer. The variables $x$ and $y$ select which truth-table entry appears at the output.
+
+\begin{whiteboard}
+
+\correspondstable{4-5}
+
+\begin{center}
+\includegraphics[width=0.92\textwidth]{table4_5.png}
+\end{center}
+
+\[
+xy=00\Rightarrow F=S_3
+\]
+
+\[
+xy=01\Rightarrow F=S_2
+\]
+
+\[
+xy=10\Rightarrow F=S_1
+\]
+
+\[
+xy=11\Rightarrow F=S_0
+\]
+
+\[
+\boxed{F=x'y'S_3+x'yS_2+xy'S_1+xyS_0}
+\]
+
+\[
+\boxed{I_0=S_3,\quad I_1=S_2,\quad I_2=S_1,\quad I_3=S_0}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Applications of Logic Microoperations}
+% ------------------------------------------------------------
+
+Logic microoperations can selectively set, complement, clear, mask, insert, or compare bit positions.
+
+\begin{whiteboard}
+
+Selective set:
+
+\[
+\boxed{A\leftarrow A\vee B}
+\]
+
+\[
+1010\vee1100=1110
+\]
+
+Selective complement:
+
+\[
+\boxed{A\leftarrow A\oplus B}
+\]
+
+\[
+1010\oplus1100=0110
+\]
+
+Selective clear:
+
+\[
+\boxed{A\leftarrow A\wedge\overline B}
+\]
+
+Mask:
+
+\[
+\boxed{A\leftarrow A\wedge B}
+\]
+
+Equality test:
+
+\[
+\boxed{A=B\iff A\oplus B=0}
+\]
+
+\end{whiteboard}
+
+Insert is a two-step operation: mask the target field, then OR in the replacement bits.
+
+\begin{whiteboard}
+
+\[
+0110\,1010
+\wedge
+0000\,1111
+=
+0000\,1010
+\]
+
+then
+
+\[
+0000\,1010
+\vee
+1001\,0000
+=
+\boxed{1001\,1010}
+\]
+
+\[
+\boxed{\text{Insert}=\text{Mask then OR}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Textbook Problem 4-18: Choose the Logic Mask}
+% ------------------------------------------------------------
+
+\Q Register $A$ contains $11011001$. Determine the operand $B$ and logic microoperation required to obtain (a) $01101101$ and (b) $11111101$.
+
+\A Part (a) requires selected bits to flip, so use XOR. The required mask is the XOR of the initial and desired values. Part (b) only requires selected positions to be forced to 1, so use OR.
+
+\begin{whiteboard}
+
+\[
+A=11011001
+\]
+
+Part (a):
+
+\[
+B=A\oplus A_{desired}
+\]
+
+\[
+11011001\oplus01101101=10110100
+\]
+
+\[
+\boxed{B=10110100}
+\qquad
+\boxed{A\leftarrow A\oplus B}
+\]
+
+Check:
+
+\[
+11011001\oplus10110100=\boxed{01101101}
+\]
+
+Part (b):
+
+\[
+\boxed{B=11111101}
+\qquad
+\boxed{A\leftarrow A\vee B}
+\]
+
+\[
+11011001\vee11111101=\boxed{11111101}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Register Problem 11: Design Masks for a 16-Bit Word}
+% ------------------------------------------------------------
+
+\Q Given
+
+\[
+A=00001111\ 10101010,
+\]
+
+find the operation and operand needed to (a) clear all even bit positions, (b) set the leftmost four bits, and (c) complement the center eight bits.
+
+\A Use AND with zeros to clear selected positions, OR with ones to set selected positions, and XOR with ones to complement selected positions.
+
+\begin{whiteboard}
+
+\[
+A=00001111\ 10101010
+\]
+
+(a) Clear even positions:
+
+\[
+\boxed{B=10101010\ 10101010}
+\]
+
+\[
+A\wedge B
+=
+\boxed{00001010\ 10101010}
+\]
+
+(b) Set leftmost four bits:
+
+\[
+\boxed{B=11110000\ 00000000}
+\]
+
+\[
+A\vee B
+=
+\boxed{11111111\ 10101010}
+\]
+
+(c) Complement center eight bits:
+
+\[
+\boxed{B=00001111\ 11110000}
+\]
+
+\[
+A\oplus B
+=
+\boxed{00000000\ 01011010}
+\]
+
+\[
+\boxed{
+\begin{array}{c|c}
+\text{Task}&\text{Operation}\\
+\hline
+\text{Clear selected bits}&AND\\
+\text{Set selected bits}&OR\\
+\text{Complement selected bits}&XOR
+\end{array}}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Shift Microoperations}
+% ============================================================
+
+Shift microoperations move register bits to the left or right. Mano distinguishes logical, circular, and arithmetic shifts.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{Shift Microoperations}}
+\]
+
+\[
+\boxed{\text{logical}\qquad\text{circular}\qquad\text{arithmetic}}
+\]
+
+\[
+\begin{array}{l|l}
+R\leftarrow shl\ R&\text{logical shift left}\\
+R\leftarrow shr\ R&\text{logical shift right}\\
+R\leftarrow cil\ R&\text{circular shift left}\\
+R\leftarrow cir\ R&\text{circular shift right}\\
+R\leftarrow ashl\ R&\text{arithmetic shift left}\\
+R\leftarrow ashr\ R&\text{arithmetic shift right}
+\end{array}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Logical and Circular Shifts}
+% ------------------------------------------------------------
+
+A logical shift inserts 0 into the vacant position. A circular shift feeds the bit leaving one end back into the other end.
+
+\begin{whiteboard}
+
+Logical:
+
+\[
+1011\xrightarrow{shr}0101
+\]
+
+\[
+1011\xrightarrow{shl}0110
+\]
+
+\[
+\boxed{\text{logical shift inserts }0}
+\]
+
+Circular:
+
+\[
+1011\xrightarrow{cir}1101
+\]
+
+\[
+1011\xrightarrow{cil}0111
+\]
+
+\[
+\boxed{\text{circular shift loses no bit}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Arithmetic Shifts}
+% ------------------------------------------------------------
+
+For signed 2's-complement data, an arithmetic shift right preserves the sign by copying the sign bit into the vacated high-order position. An arithmetic shift left inserts 0 at the low-order end and corresponds to multiplication by 2, but it may overflow.
+
+\begin{whiteboard}
+
+\[
+\boxed{ashr\Rightarrow\text{divide by }2\text{ while preserving sign}}
+\]
+
+\[
+\boxed{ashl\Rightarrow\text{multiply by }2}
+\]
+
+Arithmetic-left overflow test:
+
+\[
+\boxed{V_s=R_{n-1}\oplus R_{n-2}}
+\]
+
+\[
+V_s=1\Rightarrow\boxed{\text{overflow}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Textbook Problem 4-20: Arithmetic Shift and Overflow}
+% ------------------------------------------------------------
+
+\Q An 8-bit register contains $10011100$. Find the result after an arithmetic shift right. Starting again from the original value, find the result after an arithmetic shift left and determine whether overflow occurs.
+
+\A The arithmetic right shift copies the sign bit. The arithmetic left shift inserts 0 at the right and tests the two original most significant bits for overflow.
+
+\begin{whiteboard}
+
+\[
+R=10011100
+\]
+
+\[
+\operatorname{ashr}(10011100)=\boxed{11001110}
+\]
+
+\[
+\operatorname{ashl}(10011100)=\boxed{00111000}
+\]
+
+\[
+V_s=R_7\oplus R_6=1\oplus0=1
+\]
+
+\[
+\boxed{\text{Overflow occurs}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\subsection{Combinational Shifter}
+% ------------------------------------------------------------
+
+A processor can implement shifting as a combinational datapath operation instead of requiring a separate shift-register clock cycle. Mano's 4-bit combinational shifter uses multiplexers to select the source for each output bit.
+
+\begin{whiteboard}
+
+\corresponds{4-12}
+
+\begin{center}
+\includegraphics[width=0.82\textwidth]{fig4_12.png}
+\end{center}
+
+\[
+\boxed{S=0\Rightarrow\text{shift right}}
+\]
+
+\[
+\boxed{S=1\Rightarrow\text{shift left}}
+\]
+
+\end{whiteboard}
+
+% ------------------------------------------------------------
+\worked{Register Problem 12: Johnson Counter as a Shift-Register Application}
+% ------------------------------------------------------------
+
+\Q A switch-tail ring counter (Johnson counter) feeds the complement of the serial output of a right-shift register back into the serial input. Starting from $0000$, list the sequence until the register returns to $0000$. How many states does an $n$-bit Johnson counter have in its normal sequence?
+
+\A For a right shift, the rightmost bit is the serial output. Its complement enters the leftmost position. Starting from all zeros, ones enter one at a time until the register becomes all ones; then zeros enter one at a time until the register returns to all zeros.
+
+\begin{whiteboard}
+
+\[
+Q_3^+=Q_0',
+\qquad
+Q_2^+=Q_3,
+\qquad
+Q_1^+=Q_2,
+\qquad
+Q_0^+=Q_1
+\]
+
+\[
+\boxed{
+0000\rightarrow1000\rightarrow1100\rightarrow1110\rightarrow1111
+\rightarrow0111\rightarrow0011\rightarrow0001\rightarrow0000
+}
+\]
+
+\[
+\boxed{\#\text{ states}=2n}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Arithmetic Logic Shift Unit}
+% ============================================================
+
+Rather than provide separate arithmetic and logic hardware for every register, computers route source-register data through a shared arithmetic logic unit (ALU). The selected operation is performed combinationally, and the result is transferred to a destination register.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{ALU}=\text{Arithmetic Logic Unit}}
+\]
+
+\[
+\boxed{\text{source registers}\rightarrow\text{ALU}\rightarrow\text{destination register}}
+\]
+
+\[
+\boxed{\text{ALU is combinational}}
+\]
+
+\end{whiteboard}
+
+The arithmetic, logic, and shift circuits developed earlier can be combined into one arithmetic logic shift unit.
+
+\begin{whiteboard}
+
+\corresponds{4-13}
+
+\begin{center}
+\includegraphics[height=0.57\textheight,keepaspectratio]{fig4_13.png}
+\end{center}
+
+\[
+\boxed{\text{Arithmetic}+\text{Logic}+\text{Shift}}
+\]
+
+\[
+\boxed{\rightarrow\text{one selectable operational unit}}
+\]
+
+\end{whiteboard}
+
+For an $n$-bit datapath, the one-bit stage is repeated $n$ times. The high-order selection bits choose the overall operation class.
+
+\begin{whiteboard}
+
+\[
+\boxed{n\text{-bit unit}=n\text{ repeated stages}}
+\]
+
+\[
+\begin{array}{cc|c}
+S_3&S_2&\text{Operation class}\\
+\hline
+0&0&\text{Arithmetic}\\
+0&1&\text{Logic}\\
+1&0&\text{Shift right}\\
+1&1&\text{Shift left}
+\end{array}
+\]
+
+\end{whiteboard}
+
+The complete control table is the final reference for the chapter.
+
+\begin{whiteboard}
+
+\correspondstable{4-8}
+
+\begin{center}
+\includegraphics[width=0.94\textwidth]{table4_8.png}
+\end{center}
+
+\[
+\boxed{\text{one datapath}+\text{control selection}=\text{many microoperations}}
+\]
+
+\end{whiteboard}
+
+% ============================================================
+\section{Chapter Synthesis}
+% ============================================================
+
+Chapter 4 ties together the storage components of earlier chapters with the datapath operations used inside a computer. Registers hold information, RTL describes transfers and transformations, common buses move data among modules, and arithmetic, logic, and shift hardware perform the selected microoperations.
+
+The worked problems reinforce an important design principle: the symbolic microoperation tells us what must happen, while the hardware organization determines how efficiently it can be implemented.
+
+\begin{whiteboard}
+
+\[
+\boxed{\text{registers}\rightarrow\text{RTL}\rightarrow\text{controlled transfers}}
+\]
+
+\[
+\boxed{\rightarrow\text{common bus}\rightarrow\text{memory transfer}}
+\]
+
+\[
+\boxed{\rightarrow\text{arithmetic}+\text{logic}+\text{shift}}
+\]
+
+\[
+\boxed{\rightarrow\text{ALU}}
+\]
+
+\vspace{0.4em}
+
+\[
+\boxed{\text{Registers store data.}}
+\]
+
+\[
+\boxed{\text{Microoperations transfer or transform it.}}
+\]
+
+\[
+\boxed{\text{Control determines what happens and when.}}
+\]
+
+\[
+\boxed{\text{Good hardware design reuses existing functional units.}}
+\]
+
+\end{whiteboard}
+
+\end{document}
